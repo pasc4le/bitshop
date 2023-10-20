@@ -1,0 +1,17 @@
+{
+	"name": "uWebSockets.js",
+	"version": "20.31.0",
+	"main": "./dist/uws.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"import": "./dist/ESM_wrapper.mjs",
+		"require": "./dist/uws.js",
+		"types": "./dist/index.d.ts"
+	},
+	"scripts": {
+		"preinstall": "sh ./download.sh"
+	},
+	"bin": {
+		"uws": "./cli.mjs"
+	}
+}
