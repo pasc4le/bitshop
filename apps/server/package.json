@@ -13,6 +13,7 @@
 		"@types/node": "^20.8.7",
 		"bitshop-logger": "workspace:*",
 		"nodemon": "^3.0.1",
+		"nostr-tools": "^1.15.0",
 		"ts-node": "^10.9.1",
 		"tsup": "^7.2.0",
 		"typescript": "^5.2.2",

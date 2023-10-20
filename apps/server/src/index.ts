@@ -1,13 +1,11 @@
-import { env } from "~env";
-import logger from 'bitshop-logger';
-import { App } from "uWebSockets.js";
+import { RelayHandler, MessageHandler } from "~handlers";
 
-const app = App();
+export class Master {
+  private databaseConnector: any;
+  private relayHandler = new RelayHandler();
+  private messageHandler = new MessageHandler();
 
-app.get('/', async (res, _req) => {
-  res.end('Hello, world');
-})
+  constructor() { }
+}
 
-app.listen(env.HOST, env.PORT, (socket) => {
-  if (socket) logger.info(`Server is listening on port ${env.PORT}`);
-})
+export default new Master();
