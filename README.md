@@ -14,4 +14,4 @@ The official turborepo for Bitshop org.
 to start using this repo:
 
 - install `pnpm`. Assuming a POSIX compliant system, do `curl -fsSL https://get.pnpm.io/install.sh | sh -`
-- in the root of this repo do `pnpm i` to install all packages
+- in the root of this repo do `pnpm i <opt:name package>` to install all packages
