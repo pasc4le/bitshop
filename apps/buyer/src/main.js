@@ -27,8 +27,8 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
 import OwlCarousel from "react-owl-carousel";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import "./assets/owl.carousel/owl.carousel.css";
+import "./assets/owl.carousel/owl.theme.default.css";
 
 import Product from "./component/product/index";
 import Store from "./component/store/index";
@@ -376,7 +376,7 @@ function Main() {
 
   // let all_producthtml = '';
 
-  useEffect(() => {}, [producthtml]);
+  useEffect(() => { }, [producthtml]);
 
   return (
     <div>

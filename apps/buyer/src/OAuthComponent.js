@@ -1,7 +1,7 @@
 // OAuthComponent.js
-import React, { useEffect, useState } from "react";
-import axios from "axios";
 import qs from "qs";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 function OAuthComponent() {
   const [code, setCodeRaw] = useState(null);

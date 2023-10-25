@@ -5,6 +5,9 @@
 		"require": ["tsconfig-paths/register"]
 	},
 	"compilerOptions": {
+		"paths": {
+			"~*": ["./*"]
+		},
 		"composite": false,
 		"declaration": true,
 		"declarationMap": true,
@@ -23,7 +26,6 @@
 		"strictPropertyInitialization": false,
 		"target": "esnext",
 		"useDefineForClassFields": false,
-
 		"outDir": "dist"
 	},
 	"exclude": ["node_modules"]
