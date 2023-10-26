@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { submitProduct } from "./lib/product"; // Import the function
+import { submitProduct, submitStall } from "./lib/product.ts"; // Import the function
 
 const ProductInsert = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +13,49 @@ const ProductInsert = () => {
     categories: [],
   });
 
+  const [form, setForm] = useState({
+    privateKey: "",
+    publicKey: "",
+    stallName: "",
+    stallDescription: "",
+    shippingZones: [{ name: "", cost: "", regions: "" }],
+  });
+
   const handleInputChange = (e, key) => {
     setFormData({ ...formData, [key]: e.target.value });
+  };
+
+  const handleChangeStall = (e, index, field) => {
+    const value = e.target.value;
+    if (field !== "shippingZones") {
+      setForm({
+        ...form,
+        [field]: value,
+      });
+    } else {
+      const newShippingZones = [...form.shippingZones];
+      newShippingZones[index][e.target.name] = value;
+      setForm({
+        ...form,
+        shippingZones: newShippingZones,
+      });
+    }
+  };
+
+  const addShippingZone = () => {
+    setForm({
+      ...form,
+      shippingZones: [
+        ...form.shippingZones,
+        { name: "", cost: "", regions: "" },
+      ],
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(form);
+    // Perform submission logic here
   };
 
   const handleArrayChange = (e, key, index) => {
@@ -29,108 +70,177 @@ const ProductInsert = () => {
 
   const isHttpsLink = (link) => /^https:\/\//.test(link);
 
-  const handleSubmit = (e) => {
+  const handleSubmitProtocol = (e) => {
     e.preventDefault(); // Prevent default form submission
     submitProduct(formData);
   };
 
+  const handleSubmitStall = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    submitStall(form);
+  };
+
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Private Key:
-          <input
-            type="password"
-            onChange={(e) => handleInputChange(e, "privateKey")}
-          />
-        </label>
-        <br />
-
-        <label>
-          Public Key:
-          <input
-            type="text"
-            onChange={(e) => handleInputChange(e, "publicKey")}
-          />
-        </label>
-        <br />
-        <label>
-          Stall ID:
-          <input
-            type="text"
-            onChange={(e) => handleInputChange(e, "stall_id")}
-          />
-        </label>
-        <br />
-
-        <label>
-          Name:
-          <input type="text" onChange={(e) => handleInputChange(e, "name")} />
-        </label>
-        <br />
-
-        <label>
-          Price:
-          <input
-            type="number"
-            onChange={(e) => handleInputChange(e, "price")}
-          />
-        </label>
-        <br />
-
-        <label>
-          Quantity:
-          <input
-            type="number"
-            onChange={(e) => handleInputChange(e, "quantity")}
-          />
-        </label>
-        <br />
-
-        <label>
-          Description:
-          <textarea onChange={(e) => handleInputChange(e, "description")} />
-        </label>
-        <br />
-
-        <label>
-          Categories:
-          {formData.categories.map((cat, index) => (
-            <input
-              key={index}
-              type="text"
-              value={cat}
-              onChange={(e) => handleArrayChange(e, "categories", index)}
-            />
-          ))}
-          <button type="button" onClick={() => addElementToArray("categories")}>
-            +
-          </button>
-        </label>
-        <br />
-
-        <label>
-          Images:
-          {formData.images.map((img, index) => (
+      <div>Stall Insertion:</div>
+      <form onSubmit={handleSubmitStall}>
+        <input
+          type="text"
+          placeholder="Private Key"
+          value={form.privateKey}
+          onChange={(e) => handleChangeStall(e, null, "privateKey")}
+        />
+        <input
+          type="text"
+          placeholder="Public Key"
+          value={form.publicKey}
+          onChange={(e) => handleChangeStall(e, null, "publicKey")}
+        />
+        <input
+          type="text"
+          placeholder="Stall Name"
+          value={form.stallName}
+          onChange={(e) => handleChangeStall(e, null, "stallName")}
+        />
+        <input
+          type="text"
+          placeholder="Stall Description"
+          value={form.stallDescription}
+          onChange={(e) => handleChangeStall(e, null, "stallDescription")}
+        />
+        <div>
+          {form.shippingZones.map((zone, index) => (
             <div key={index}>
               <input
                 type="text"
-                value={img}
-                onChange={(e) => handleArrayChange(e, "images", index)}
+                name="name"
+                placeholder="Name"
+                value={zone.name}
+                onChange={(e) => handleChangeStall(e, index, "shippingZones")}
               />
-              {!isHttpsLink(img) && <span>Not a valid HTTPS link</span>}
+              <input
+                type="number"
+                name="cost"
+                placeholder="Cost"
+                value={zone.cost}
+                onChange={(e) => handleChangeStall(e, index, "shippingZones")}
+              />
+              <input
+                type="text"
+                name="regions"
+                placeholder="Regions (comma-separated)"
+                value={zone.regions}
+                onChange={(e) => handleChangeStall(e, index, "shippingZones")}
+              />
             </div>
           ))}
-          <button type="button" onClick={() => addElementToArray("images")}>
+          <button type="button" onClick={addShippingZone}>
             +
           </button>
-        </label>
-        <br />
-
-        {/* Add more fields like 'specs' if needed */}
-
+        </div>
         <button type="submit">Submit</button>
       </form>
+      <div>
+        Product Insertion:
+        <form onSubmit={handleSubmitProtocol}>
+          <label>
+            Private Key:
+            <input
+              type="password"
+              onChange={(e) => handleInputChange(e, "privateKey")}
+            />
+          </label>
+          <br />
+
+          <label>
+            Public Key:
+            <input
+              type="text"
+              onChange={(e) => handleInputChange(e, "publicKey")}
+            />
+          </label>
+          <br />
+          <label>
+            Stall ID:
+            <input
+              type="text"
+              onChange={(e) => handleInputChange(e, "stall_id")}
+            />
+          </label>
+          <br />
+
+          <label>
+            Name:
+            <input type="text" onChange={(e) => handleInputChange(e, "name")} />
+          </label>
+          <br />
+
+          <label>
+            Price:
+            <input
+              type="number"
+              onChange={(e) => handleInputChange(e, "price")}
+            />
+          </label>
+          <br />
+
+          <label>
+            Quantity:
+            <input
+              type="number"
+              onChange={(e) => handleInputChange(e, "quantity")}
+            />
+          </label>
+          <br />
+
+          <label>
+            Description:
+            <textarea onChange={(e) => handleInputChange(e, "description")} />
+          </label>
+          <br />
+
+          <label>
+            Categories:
+            {formData.categories.map((cat, index) => (
+              <input
+                key={index}
+                type="text"
+                value={cat}
+                onChange={(e) => handleArrayChange(e, "categories", index)}
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => addElementToArray("categories")}
+            >
+              +
+            </button>
+          </label>
+          <br />
+
+          <label>
+            Images:
+            {formData.images.map((img, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  value={img}
+                  onChange={(e) => handleArrayChange(e, "images", index)}
+                />
+                {!isHttpsLink(img) && <span>Not a valid HTTPS link</span>}
+              </div>
+            ))}
+            <button type="button" onClick={() => addElementToArray("images")}>
+              +
+            </button>
+          </label>
+          <br />
+
+          {/* Add more fields like 'specs' if needed */}
+
+          <button type="submit">Submit</button>
+        </form>
+      </div>
     </div>
   );
 };

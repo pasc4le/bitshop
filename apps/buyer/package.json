@@ -36,6 +36,7 @@
     "react-owl-carousel": "^2.3.3",
     "react-router-dom": "^6.15.0",
     "starkbank-ecdsa": "^1.1.5",
+    "uuid": "^9.0.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.2.0"
   },
@@ -69,16 +70,16 @@
     ]
   },
   "devDependencies": {
-    "@types/qs": "^6.9.9",
-    "react-scripts": "5.0.1",
-    "react-bootstrap": "^2.8.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/node": "^20.6.3",
+    "@types/qs": "^6.9.9",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
     "@types/websocket": "^1.0.6",
+    "react-bootstrap": "^2.8.0",
+    "react-scripts": "5.0.1",
     "reactstrap": "^9.2.0",
     "typescript": "^5.0"
   }
