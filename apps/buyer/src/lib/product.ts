@@ -17,7 +17,7 @@ interface ProductFormData {
   price: number;
   quantity: number;
   images: string[];
-  specs: string;
+  specs: [string, string][];
   description: string;
   categories: string[];
   privateKey: string;
@@ -211,6 +211,29 @@ export const submitProduct = (formData: ProductFormData): void => {
   };
 
   console.log("Submitted Product:", Product);
+  (async () => {
+    const ciProductEvent: CreateProductInput = {
+      stall_id: stall_id,
+      name: name,
+      price: price,
+      quantity: quantity,
+      images: images,
+      specs: specs,
+      description: description,
+      categories: categories,
+    };
+
+    const ProdEvt = createPublishProductEvent(ciProductEvent);
+    const cpr = await publishEvent(ProdEvt).catch((e: Error) => e);
+
+    if (cpr instanceof Error) {
+      console.info("Error publishing product -- Aborting");
+      console.error(cpr);
+    }
+
+    console.info("Product Creation Event Published");
+    console.log(ProdEvt);
+  })();
 };
 
 export const submitStall = (form: StallFormData): void => {

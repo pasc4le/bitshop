@@ -58,10 +58,26 @@ const ProductInsert = () => {
     // Perform submission logic here
   };
 
-  const handleArrayChange = (e, key, index) => {
+  const handleArrayChange = (e, key, index, subIndex = null) => {
     const arr = [...formData[key]];
-    arr[index] = e.target.value;
+
+    if (subIndex !== null) {
+      arr[index][subIndex] = e.target.value;
+    } else {
+      arr[index] = e.target.value;
+    }
+
     setFormData({ ...formData, [key]: arr });
+  };
+
+  // const addElementToArraySpec = (key, initialVal = "") => {
+  //   const arr = [...formData[key], initialVal];
+  //   setFormData({ ...formData, [key]: arr });
+  // };
+
+  const addSpecToArray = () => {
+    const arr = [...formData.specs, ["", ""]];
+    setFormData({ ...formData, specs: arr });
   };
 
   const addElementToArray = (key) => {
@@ -109,6 +125,8 @@ const ProductInsert = () => {
           onChange={(e) => handleChangeStall(e, null, "stallDescription")}
         />
         <div>
+          Insert shipping zones below:
+          <br />
           {form.shippingZones.map((zone, index) => (
             <div key={index}>
               <input
@@ -217,7 +235,29 @@ const ProductInsert = () => {
             </button>
           </label>
           <br />
-
+          <label>
+            Specs:
+            {formData.specs.map((spec, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  placeholder="Spec type"
+                  value={spec[0]}
+                  onChange={(e) => handleArrayChange(e, "specs", index, 0)}
+                />
+                <input
+                  type="text"
+                  placeholder="Spec value"
+                  value={spec[1]}
+                  onChange={(e) => handleArrayChange(e, "specs", index, 1)}
+                />
+              </div>
+            ))}
+            <button type="button" onClick={addSpecToArray}>
+              +
+            </button>
+          </label>
+          <br />
           <label>
             Images:
             {formData.images.map((img, index) => (
