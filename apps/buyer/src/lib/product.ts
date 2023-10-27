@@ -3,7 +3,12 @@ import * as Nostr from "nostr-tools";
 import { v4 } from "uuid";
 
 //TODO: Should be moved to process.env vars
-const BLASTR_EP = "http://127.0.0.1:8787/event";
+const BLASTR_EP = "http://192.168.1.13:8787/event";
+
+const tPrivKey =
+  "13dbcaa529e29ba461b2aa9f4bea1de235fcdf520baade6b4b7dcf4ee0deeecb";
+const tPubKey =
+  "6f141e5b8607932c1930760dd2fd7ab7ea3dc829844ce72faa408db1334105ad";
 
 const EVENT_KINDS = {
   PUBLISH_STALL: 300170, // 30017 is the real event kind
@@ -181,7 +186,7 @@ interface StallFormData {
   publicKey: string;
   stallName: string;
   stallDescription: string;
-  shippingZones: string[];
+  shippingZones: string;
 }
 
 // Function definition with type annotations
@@ -244,37 +249,37 @@ export const submitStall = (form: StallFormData): void => {
 
   console.log("Submitted stall:", Stall);
 
-  const countriesString = item.regions;
-  const countriesArray: string[] = countriesString
-    .split(",")
-    .map((country) => country.trim());
-  const transformedArray: ShippingZone[] = countriesArray.map((item) => {
-    if (item.regions.length === 0) {
-      throw new Error("regions array must contain at least one element");
-    }
+  // const countriesString = item.regions;
+  // const countriesArray: string[] = shippingZones
+  //   .split(",")
+  //   .map((country) => country.trim());
+  // const transformedArray: ShippingZone[] = countriesArray.map((item) => {
+  //   if (item.length === 0) {
+  //     throw new Error("regions array must contain at least one element");
+  //   }
 
-    console.log(countriesArray); // Output: ["Italy", "France", "Germany"]
-    return {
-      name: item.name,
-      cost: item.cost,
-      regions: [countriesArray[0], ...countriesArray.slice(1)],
-    };
-  });
+  //   console.log(countriesArray); // Output: ["Italy", "France", "Germany"]
+  //   return {
+  //     name: item.name,
+  //     cost: item.cost,
+  //     regions: [countriesArray[0], ...countriesArray.slice(1)],
+  //   };
+  // });
 
-  const shippingZonesArray: ShippingZone[] = transformedArray;
+  // const shippingZonesArray: ShippingZone[] = transformedArray;
 
-  if (shippingZonesArray.length === 0) {
-    throw new Error("The array must contain at least one element.");
-  }
+  // if (shippingZonesArray.length === 0) {
+  //   throw new Error("The array must contain at least one element.");
+  // }
 
-  const atLeastOneShippingZone: [ShippingZone, ...ShippingZone[]] =
-    shippingZonesArray as [ShippingZone, ...ShippingZone[]];
+  // const atLeastOneShippingZone: [ShippingZone, ...ShippingZone[]] =
+  //   shippingZonesArray as [ShippingZone, ...ShippingZone[]];
 
   (async () => {
     const cStallEvent: CreateStallInput = {
       stallName: stallName,
       stallDescription: stallDescription,
-      shippingZones: atLeastOneShippingZone,
+      shippingZones: shippingZones,
     };
     const stallEvt = createPublishStallEvent(cStallEvent);
     const csr = await publishEvent(stallEvt).catch((e: Error) => e);
