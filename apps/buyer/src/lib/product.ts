@@ -27,6 +27,7 @@ interface ProductFormData {
   categories: string[];
   privateKey: string;
   publicKey: string;
+  shipping: [];
 }
 
 type __ShippingZone = {
@@ -72,7 +73,8 @@ type CreateProductInput = {
   price: number;
   quantity: number;
   specs?: [string, string][];
-  shipping?: [ProductShippingZone, ...ProductShippingZone[]]; // Added to the stall shipping costs zone matching the ID
+  // shipping?: [ProductShippingZone, ...ProductShippingZone[]]; // Added to the stall shipping costs zone matching the ID
+  shipping?: [];
   categories?: string[];
 };
 
@@ -155,6 +157,7 @@ function createPublishProductEvent(i: CreateProductInput) {
     specs: i.specs?.length ? i.specs : undefined,
     description: i.description ?? "",
     images: i.images ?? [],
+    shipping: i.shipping ?? [],
   };
 
   const tags = [
@@ -200,6 +203,7 @@ export const submitProduct = (formData: ProductFormData): void => {
     specs,
     description,
     categories,
+    shipping,
     privateKey,
     publicKey,
   } = formData;
@@ -213,6 +217,7 @@ export const submitProduct = (formData: ProductFormData): void => {
     specs,
     description,
     categories,
+    shipping,
   };
 
   console.log("Submitted Product:", Product);
@@ -226,6 +231,7 @@ export const submitProduct = (formData: ProductFormData): void => {
       specs: specs,
       description: description,
       categories: categories,
+      shipping: shipping,
     };
 
     const ProdEvt = createPublishProductEvent(ciProductEvent);

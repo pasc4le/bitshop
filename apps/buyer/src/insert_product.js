@@ -11,6 +11,7 @@ const ProductInsert = () => {
     specs: [],
     description: "",
     categories: [],
+    shipping: [],
   });
 
   const [form, setForm] = useState({
@@ -80,13 +81,20 @@ const ProductInsert = () => {
     setFormData({ ...formData, specs: arr });
   };
 
+  const addZoneToArray = () => {
+    const newObj = { id: "", cost: "" };
+    const arr = [...formData.shipping, newObj];
+    setFormData({ ...formData, shipping: arr });
+    console.log(newObj);
+  };
+
   const addElementToArray = (key) => {
     setFormData({ ...formData, [key]: [...formData[key], ""] });
   };
 
   const isHttpsLink = (link) => /^https:\/\//.test(link);
 
-  const handleSubmitProtocol = (e) => {
+  const handleSubmitProduct = (e) => {
     e.preventDefault(); // Prevent default form submission
     submitProduct(formData);
   };
@@ -98,7 +106,7 @@ const ProductInsert = () => {
 
   return (
     <div>
-      <div>Stall Insertion:</div>
+      <h2>Stall Insertion:</h2>
       <form onSubmit={handleSubmitStall}>
         <input
           type="text"
@@ -158,9 +166,10 @@ const ProductInsert = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <br />
       <div>
-        Product Insertion:
-        <form onSubmit={handleSubmitProtocol}>
+        <h2>Product Insertion:</h2>
+        <form onSubmit={handleSubmitProduct}>
           <label>
             Private Key:
             <input
@@ -217,6 +226,33 @@ const ProductInsert = () => {
           </label>
           <br />
 
+          <label>
+            Shipping Zones (must be a subset of those of the stall):
+            {formData.shipping.map((spec, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  placeholder="One of the shipping zones of the stall"
+                  value={spec[0]}
+                  onChange={(e) =>
+                    handleArrayChange(e, "shipping", index, "id")
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="Additional cost of item"
+                  value={spec[1]}
+                  onChange={(e) =>
+                    handleArrayChange(e, "shipping", index, "cost")
+                  }
+                />
+              </div>
+            ))}
+            <button type="button" onClick={addZoneToArray}>
+              +
+            </button>
+          </label>
+          <br />
           <label>
             Categories:
             {formData.categories.map((cat, index) => (
