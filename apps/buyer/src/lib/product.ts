@@ -98,7 +98,7 @@ export function createPublishStallEvent(
 ): Nostr.VerifiedEvent {
   const z: __ShippingZone[] = i.shippingZones.map((z) => {
     return {
-      id: v4(),
+      id: z.name,
       name: z.name,
       cost: z.cost,
       regions: z.regions,
