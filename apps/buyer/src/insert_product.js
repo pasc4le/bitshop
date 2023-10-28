@@ -3,6 +3,8 @@ import { submitProduct, submitStall, KeyGen } from "./lib/product.ts"; // Import
 
 const ProductInsert = () => {
   const [keyPair, setKeyPair] = useState({ priv: "", pub: "" });
+  const [stallInfo, setStallInfo] = useState({ stallID: "", stallName: "" });
+  const [prodInfo, setProdInfo] = useState({ prodId: "" });
 
   const fetchData = async () => {
     const result = await KeyGen();
@@ -101,20 +103,36 @@ const ProductInsert = () => {
 
   const isHttpsLink = (link) => /^https:\/\//.test(link);
 
-  const handleSubmitProduct = (e) => {
+  const handleSubmitProduct = async (e) => {
     e.preventDefault(); // Prevent default form submission
-    submitProduct(formData);
+
+    const data = await submitProduct(formData);
+    setProdInfo(data);
+    console.log(prodInfo);
   };
 
-  const handleSubmitStall = (e) => {
+  const handleSubmitStall = async (e) => {
     e.preventDefault(); // Prevent default form submission
-    submitStall(form);
+    // console.log(stallInfo);
+    const data = await submitStall(form);
+    setStallInfo(data);
+    console.log(stallInfo);
   };
 
   return (
     <div>
       <h2>Key Generation</h2>
       <p>Run only only once</p>
+      <p>
+        BE AWARE of the following things:
+        <ul>
+          <li>
+            we CANNOT recover your key right now: you lose them, you lose
+            EVERYTHING: you shop, your stall, your orders etc
+          </li>
+          <li>BEST thing to do is to SAVE them somewhere safe</li>
+        </ul>
+      </p>
 
       <button onClick={fetchData}>KeyGen</button>
 
@@ -128,6 +146,15 @@ const ProductInsert = () => {
         <label>
           Public:
           <input type="text" value={keyPair.pub} readOnly />
+          {keyPair.pub && (
+            <a
+              href={"/store?id=" + keyPair.pub}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Go to Store
+            </a>
+          )}
         </label>
       </div>
       <h2>Stall Insertion:</h2>
@@ -190,6 +217,27 @@ const ProductInsert = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <label>
+          Stall ID:
+          <input type="text" value={stallInfo.stallID} readOnly />
+          {stallInfo.stallID && (
+            <a
+              href={"/stall?id=" + stallInfo.stallID}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Go to Stall
+            </a>
+          )}
+        </label>
+      </div>
+      <div>
+        <label>
+          Stall Name:
+          <input type="text" value={stallInfo.stallName} readOnly />
+        </label>
+      </div>
       <br />
       <div>
         <h2>Product Insertion:</h2>
@@ -340,6 +388,21 @@ const ProductInsert = () => {
 
           <button type="submit">Submit</button>
         </form>
+      </div>
+      <div>
+        <label>
+          Product Id:
+          <input type="text" value={prodInfo.prodId} readOnly />
+          {prodInfo.prodId && (
+            <a
+              href={"/details?id=" + prodInfo.prodId}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Go to Product
+            </a>
+          )}
+        </label>
       </div>
     </div>
   );

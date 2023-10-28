@@ -103,7 +103,8 @@ export async function publishEvent(i: Nostr.VerifiedEvent) {
 
 export function createPublishStallEvent(
   i: CreateStallInput,
-  privKey: string
+  privKey: string,
+  pubKey: string
 ): Nostr.VerifiedEvent {
   const z: __ShippingZone[] = i.shippingZones.map((z) => {
     return {
@@ -132,7 +133,7 @@ export function createPublishStallEvent(
     created_at: Math.floor(Date.now() / 1000),
     content: JSON.stringify(ed),
     tags: [["d", stallId]],
-    pubkey: tPubKey,
+    pubkey: pubKey,
   };
 
   const signed = Nostr.finishEvent(e, privKey);
@@ -153,7 +154,11 @@ async function getStalls() {
   throw new Error("uninplemented");
 }
 
-function createPublishProductEvent(i: CreateProductInput, privKey: string) {
+function createPublishProductEvent(
+  i: CreateProductInput,
+  privKey: string,
+  pubKey: string
+) {
   const productId = v4();
 
   const content: ProductEventContent = {
@@ -179,7 +184,7 @@ function createPublishProductEvent(i: CreateProductInput, privKey: string) {
     created_at: Math.floor(Date.now() / 1000),
     content: JSON.stringify(content),
     tags,
-    pubkey: tPubKey,
+    pubkey: pubKey,
   };
 
   const signed = Nostr.finishEvent(e, privKey);
@@ -202,7 +207,9 @@ interface StallFormData {
 }
 
 // Function definition with type annotations
-export const submitProduct = (formData: ProductFormData): void => {
+export const submitProduct = async (
+  formData: ProductFormData
+): Promise<{ prodId: string }> => {
   const {
     stall_id,
     name,
@@ -230,33 +237,43 @@ export const submitProduct = (formData: ProductFormData): void => {
   };
 
   console.log("Submitted Product:", Product);
-  (async () => {
-    const ciProductEvent: CreateProductInput = {
-      stall_id: stall_id,
-      name: name,
-      price: price,
-      quantity: quantity,
-      images: images,
-      specs: specs,
-      description: description,
-      categories: categories,
-      shipping: shipping,
-    };
 
-    const ProdEvt = createPublishProductEvent(ciProductEvent, privateKey);
-    const cpr = await publishEvent(ProdEvt).catch((e: Error) => e);
+  const ciProductEvent: CreateProductInput = {
+    stall_id: stall_id,
+    name: name,
+    price: price,
+    quantity: quantity,
+    images: images,
+    specs: specs,
+    description: description,
+    categories: categories,
+    shipping: shipping,
+  };
 
-    if (cpr instanceof Error) {
-      console.info("Error publishing product -- Aborting");
-      console.error(cpr);
-    }
+  const ProdEvt = createPublishProductEvent(
+    ciProductEvent,
+    privateKey,
+    publicKey
+  );
+  const cpr = await publishEvent(ProdEvt).catch((e: Error) => e);
 
-    console.info("Product Creation Event Published");
-    console.log(ProdEvt);
-  })();
+  if (cpr instanceof Error) {
+    console.info("Error publishing product -- Aborting");
+    console.error(cpr);
+  }
+
+  console.info("Product Creation Event Published");
+  console.log(ProdEvt);
+
+  const prodCont = JSON.parse(ProdEvt.content);
+  console.log("id: " + prodCont.id);
+
+  return { prodId: prodCont.id };
 };
 
-export const submitStall = (form: StallFormData): void => {
+export const submitStall = async (
+  form: StallFormData
+): Promise<{ stallID: string; stallName: string }> => {
   const { privateKey, publicKey, stallName, stallDescription, shippingZones } =
     form;
 
@@ -264,49 +281,26 @@ export const submitStall = (form: StallFormData): void => {
 
   console.log("Submitted stall:", Stall);
 
-  // const countriesString = item.regions;
-  // const countriesArray: string[] = shippingZones
-  //   .split(",")
-  //   .map((country) => country.trim());
-  // const transformedArray: ShippingZone[] = countriesArray.map((item) => {
-  //   if (item.length === 0) {
-  //     throw new Error("regions array must contain at least one element");
-  //   }
+  const cStallEvent: CreateStallInput = {
+    stallName: stallName,
+    stallDescription: stallDescription,
+    shippingZones: shippingZones,
+  };
+  const stallEvt = createPublishStallEvent(cStallEvent, privateKey, publicKey);
+  const csr = await publishEvent(stallEvt).catch((e: Error) => e);
 
-  //   console.log(countriesArray); // Output: ["Italy", "France", "Germany"]
-  //   return {
-  //     name: item.name,
-  //     cost: item.cost,
-  //     regions: [countriesArray[0], ...countriesArray.slice(1)],
-  //   };
-  // });
+  if (csr instanceof Error) {
+    console.info("Error publishing stall -- Aborting");
+    console.error(csr);
+  }
 
-  // const shippingZonesArray: ShippingZone[] = transformedArray;
+  console.info("Stall Creation Event Published");
+  console.log(stallEvt);
+  const stallCont = JSON.parse(stallEvt.content);
+  console.log("id: " + stallCont.id);
+  console.log("name: " + stallCont.name);
 
-  // if (shippingZonesArray.length === 0) {
-  //   throw new Error("The array must contain at least one element.");
-  // }
-
-  // const atLeastOneShippingZone: [ShippingZone, ...ShippingZone[]] =
-  //   shippingZonesArray as [ShippingZone, ...ShippingZone[]];
-
-  (async () => {
-    const cStallEvent: CreateStallInput = {
-      stallName: stallName,
-      stallDescription: stallDescription,
-      shippingZones: shippingZones,
-    };
-    const stallEvt = createPublishStallEvent(cStallEvent, privateKey);
-    const csr = await publishEvent(stallEvt).catch((e: Error) => e);
-
-    if (csr instanceof Error) {
-      console.info("Error publishing stall -- Aborting");
-      console.error(csr);
-    }
-
-    console.info("Stall Creation Event Published");
-    console.log(stallEvt);
-  })();
+  return { stallID: stallCont.id, stallName: stallCont.name };
 };
 
 export const KeyGen = (): KeyPair => {
