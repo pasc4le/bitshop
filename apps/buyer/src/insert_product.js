@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { submitProduct, submitStall } from "./lib/product.ts"; // Import the function
+import { submitProduct, submitStall, KeyGen } from "./lib/product.ts"; // Import the function
 
 const ProductInsert = () => {
+  const [keyPair, setKeyPair] = useState({ priv: "", pub: "" });
+
+  const fetchData = async () => {
+    const result = await KeyGen();
+    setKeyPair(result);
+  };
+
   const [formData, setFormData] = useState({
     stall_id: "",
     name: "",
@@ -106,6 +113,23 @@ const ProductInsert = () => {
 
   return (
     <div>
+      <h2>Key Generation</h2>
+      <p>Run only only once</p>
+
+      <button onClick={fetchData}>KeyGen</button>
+
+      <div>
+        <label>
+          Private:
+          <input type="text" value={keyPair.priv} readOnly />
+        </label>
+      </div>
+      <div>
+        <label>
+          Public:
+          <input type="text" value={keyPair.pub} readOnly />
+        </label>
+      </div>
       <h2>Stall Insertion:</h2>
       <form onSubmit={handleSubmitStall}>
         <input

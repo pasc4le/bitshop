@@ -9,7 +9,7 @@ import {
 import { ec as EllipticCurve } from "elliptic";
 
 // Define key-pair interface
-interface KeyPair {
+export interface KeyPair {
   priv: string;
   pub: string;
 }

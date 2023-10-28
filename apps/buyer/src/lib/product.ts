@@ -1,9 +1,13 @@
 // Import statement remains the same
 import * as Nostr from "nostr-tools";
 import { v4 } from "uuid";
+import { keyGen, KeyPair } from "./nip04_utils";
+import { ec as EllipticCurve } from "elliptic";
+
+const ec = new EllipticCurve("secp256k1");
 
 //TODO: Should be moved to process.env vars
-const BLASTR_EP = "http://fadibarbara.it:8787";
+const BLASTR_EP = "http://fadibarbara.it:8787/event";
 
 const tPrivKey =
   "13dbcaa529e29ba461b2aa9f4bea1de235fcdf520baade6b4b7dcf4ee0deeecb";
@@ -80,7 +84,11 @@ type CreateProductInput = {
 
 export async function publishEvent(i: Nostr.VerifiedEvent) {
   const w = ["EVENT", i];
-  const r = await fetch(BLASTR_EP, { method: "POST", body: JSON.stringify(w) });
+  const r = await fetch(BLASTR_EP, {
+    method: "POST",
+    body: JSON.stringify(w),
+    mode: "no-cors",
+  });
 
   const [ok, body] = [r.ok, await r.json()];
 
@@ -94,7 +102,8 @@ export async function publishEvent(i: Nostr.VerifiedEvent) {
 }
 
 export function createPublishStallEvent(
-  i: CreateStallInput
+  i: CreateStallInput,
+  privKey: string
 ): Nostr.VerifiedEvent {
   const z: __ShippingZone[] = i.shippingZones.map((z) => {
     return {
@@ -126,7 +135,7 @@ export function createPublishStallEvent(
     pubkey: tPubKey,
   };
 
-  const signed = Nostr.finishEvent(e, tPrivKey);
+  const signed = Nostr.finishEvent(e, privKey);
   const verified = Nostr.verifySignature(signed) && Nostr.validateEvent(signed);
 
   if (!verified) {
@@ -144,7 +153,7 @@ async function getStalls() {
   throw new Error("uninplemented");
 }
 
-function createPublishProductEvent(i: CreateProductInput) {
+function createPublishProductEvent(i: CreateProductInput, privKey: string) {
   const productId = v4();
 
   const content: ProductEventContent = {
@@ -173,7 +182,7 @@ function createPublishProductEvent(i: CreateProductInput) {
     pubkey: tPubKey,
   };
 
-  const signed = Nostr.finishEvent(e, tPrivKey);
+  const signed = Nostr.finishEvent(e, privKey);
   const verified = Nostr.verifySignature(signed) && Nostr.validateEvent(signed);
 
   if (!verified) {
@@ -234,7 +243,7 @@ export const submitProduct = (formData: ProductFormData): void => {
       shipping: shipping,
     };
 
-    const ProdEvt = createPublishProductEvent(ciProductEvent);
+    const ProdEvt = createPublishProductEvent(ciProductEvent, privateKey);
     const cpr = await publishEvent(ProdEvt).catch((e: Error) => e);
 
     if (cpr instanceof Error) {
@@ -287,7 +296,7 @@ export const submitStall = (form: StallFormData): void => {
       stallDescription: stallDescription,
       shippingZones: shippingZones,
     };
-    const stallEvt = createPublishStallEvent(cStallEvent);
+    const stallEvt = createPublishStallEvent(cStallEvent, privateKey);
     const csr = await publishEvent(stallEvt).catch((e: Error) => e);
 
     if (csr instanceof Error) {
@@ -298,4 +307,12 @@ export const submitStall = (form: StallFormData): void => {
     console.info("Stall Creation Event Published");
     console.log(stallEvt);
   })();
+};
+
+export const KeyGen = (): KeyPair => {
+  const Alicee = ec.genKeyPair();
+  const privAlice: string = Alicee.priv.toString(16);
+  const pubAlice: string = Alicee.getPublic().getX().toString(16);
+
+  return { priv: privAlice, pub: pubAlice };
 };
