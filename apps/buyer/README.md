@@ -1,3 +1,3 @@
 # BitShop Buyer
 
-Viareggio Demo version
+this is the `test` branch. you should see that as "stable dev" branch
