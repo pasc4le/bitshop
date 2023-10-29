@@ -29,26 +29,26 @@ import {
 //   [number | null, React.Dispatch<React.SetStateAction<number | null>>]
 // >([null, defaultSetBtcAmount]);
 
-const BtcContext = createContext<
-  [number | null, React.Dispatch<React.SetStateAction<number | null>> | null]
->([null, null]);
+// const BtcContext = createContext<
+//   [number | null, React.Dispatch<React.SetStateAction<number | null>> | null]
+// >([null, null]);
 
-export const BtcProvider: React.FC = ({ children }) => {
-  const [btcAmount, setBtcAmount] = useState<number | null>(null);
-  return (
-    <BtcContext.Provider value={[btcAmount, setBtcAmount]}>
-      {children}
-    </BtcContext.Provider>
-  );
-};
+// export const BtcProvider: React.FC = ({ children }) => {
+//   const [btcAmount, setBtcAmount] = useState<number | null>(null);
+//   return (
+//     <BtcContext.Provider value={[btcAmount, setBtcAmount]}>
+//       {children}
+//     </BtcContext.Provider>
+//   );
+// };
 
-export const useBtc = () => {
-  const context = useContext(BtcContext);
-  if (!context) {
-    throw new Error("useBtc must be used within a BtcProvider");
-  }
-  return context;
-};
+// export const useBtc = () => {
+//   const context = useContext(BtcContext);
+//   if (!context) {
+//     throw new Error("useBtc must be used within a BtcProvider");
+//   }
+//   return context;
+// };
 
 const makeInvoiceBitshop = async (amount, memo) => {
   const url = "https://legend.lnbits.com/api/v1/payments";
@@ -409,6 +409,7 @@ function ProductDetail(props: {
   const qty = props.product.quantity;
   const shippingId = props.product.shipping_zone_id;
   const [stall, setStall] = useState<null | StallEvent>(null);
+  const [btcAmount, setBtcAmount] = useState();
   const stallId = props.event.content.stall_id;
 
   useEffect(() => {
@@ -417,9 +418,36 @@ function ProductDetail(props: {
     });
   }, [stallId]);
 
-  const itemShippingCost =
-    props.event.content.shipping.find((s) => s.id === shippingId)?.cost || 0;
-  const stallShippingCost = stall?.content.shipping[0]?.cost || 0;
+  useEffect(() => {
+    const convertUsdToBtc = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.coingecko.com/api/v3/exchange_rates"
+        );
+        const btcToUsdRate = parseFloat(response.data.rates.usd.value);
+        console.log(`the btc to usd rate is: ${btcToUsdRate}`);
+        setBtcAmount(btcToUsdRate);
+        // localStorage.setItem("btcAmount", usdToBtcAmount);
+        // localStorage.setItem("reloaded", 1);
+
+        // window.location.reload();
+        console.log(`BTC amount: ${btcAmount}`);
+      } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+      }
+    };
+
+    convertUsdToBtc();
+  });
+
+  const itemShippingCost = parseFloat(
+    props.event.content.shipping.find((s) => s.id === shippingId)?.cost || 0
+  );
+  console.log("itemShippingCost:", itemShippingCost);
+  const stallShippingCost = parseFloat(
+    stall?.content.shipping.find((s) => s.id === shippingId)?.cost || 0
+  );
+  console.log("stallShippingCost:", stallShippingCost);
 
   if (!stall) {
     return <></>;
@@ -433,9 +461,13 @@ function ProductDetail(props: {
           {/* <div className="offer-badge">4% OFF</div> */}
         </div>
         <div className="cart-text">
-          <h4>{props.event.content.name}</h4>
+          <h4>
+            <a href={"details?id=" + props.event.content.id}>
+              {props.event.content.name}
+            </a>
+          </h4>
           {/* <div className="cart-item-price">1,500/- <span>1,800/-</span></div> */}
-          <div className="cart-item-price">{price * qty}$</div>
+          {/* <div className="cart-item-price">{price * qty}$</div> */}
           <button type="button" className="cart-close-btn text-danger">
             <i className="uil uil-trash-alt"></i>
           </button>
@@ -443,15 +475,20 @@ function ProductDetail(props: {
       </div>
       <div className="cart-total-dil">
         <h4>{props.event.content.name}</h4>
-        <span>
-          {price}$ x {qty}
+        <span title={`Total: ${price} USD x ${qty}`}>
+          {(price / btcAmount).toFixed(8)} BTC x {qty}
         </span>
       </div>
       <div className="cart-total-dil pt-1">
         <h4>Shipping Costs</h4>
-        <span>
+        <span
+          title={`Total: ${itemShippingCost * qty + stallShippingCost} USD`}
+        >
           {itemShippingCost + stallShippingCost > 0
-            ? `${itemShippingCost * qty + stallShippingCost}`
+            ? `${(
+                (itemShippingCost * qty + stallShippingCost) /
+                btcAmount
+              ).toFixed(8)} BTC`
             : // ? `${itemShippingCost}$ x ${qty} + ${stallShippingCost}`
               "FREE"}
         </span>
@@ -467,19 +504,95 @@ function OrderSummary(props: {
   // const [btcAmount, setBtcAmount] = useState<number | null>(null);
   // const [btcAmount, setBtcAmount] = useBtc();
 
+  const [stall, setStall] = useState<StallEvent>();
   const [btcAmount, setBtcAmount] = useState<number | null>(null);
+  const shipping_zone_id = props.cartProducts[0].shipping_zone_id;
+  const [grandTotal, setGrandTotal] = useState();
 
-  const grandTotal = props.events.reduce((acc, product) => {
-    const qty =
-      props.cartProducts.find((p) => p.product_id === product.content.id)
-        ?.quantity || 0;
-    const itemPrice = product.content.price;
-    const stallShippingCost = product.content.shipping[0]?.cost || 0;
-    const itemShippingCost = product.content.shipping[0]?.cost || 0;
+  const stallId = props.cartProducts[0].stall_id;
 
-    return acc + itemPrice * qty + itemShippingCost * qty + stallShippingCost;
-    // return itemPrice * qty;
-  }, 0);
+  // useEffect(() => {
+  //   console.log("Effect is running");
+
+  //   getStallById(stallId).then((s) => {
+  //     setStall(s);
+  //   });
+  // }, [stallId]);
+  // useEffect(() => {
+  //   console.log("Effect is running");
+  //   getStallById(stallId)
+  //     .then((s) => {
+  //       if (s === null) {
+  //         console.error("Received null stall from getStallById");
+  //       } else {
+  //         console.log("stall:", s);
+  //       }
+  //       setStall(s);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching stall:", error);
+  //     });
+  // }, [stallId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedStall = await getStallById(stallId); // Replace this with your actual API call
+        setStall(fetchedStall);
+      } catch (err) {
+        console.error("Error in getStallById:", err);
+      }
+    };
+
+    fetchData();
+  }, [stallId]);
+  // (async () => {
+  //   try {
+  // const stall = await getStallById(stallId);
+  // console.log("Stall");
+  // console.dir(stall);
+  // setStall(stall);
+  //   } catch (err) {
+  //     console.error("Error in getStallById:", err);
+  //   }
+  // })();
+  useEffect(() => {
+    if (stall) {
+      console.log("Stall");
+      console.dir(stall);
+      // console.log("before fetchStall");
+      // await fetchStall();
+      // console.log("after fetchStall");
+      const stallShipping = stall.content.shipping || null;
+      console.log("stall shipping:", stallShipping);
+      const zone = stallShipping.find((zone) => zone.id === shipping_zone_id);
+      console.log("zone:", zone);
+
+      const grandTotal: number = props.events.reduce((acc, product) => {
+        const qty = parseFloat(
+          props.cartProducts.find((p) => p.product_id === product.content.id)
+            ?.quantity || 0
+        );
+        const itemPrice = parseFloat(product.content.price);
+
+        const stallShippingCost = parseFloat(zone?.cost) || 0;
+        console.log("shipping costs:", stallShippingCost || "nada");
+        const itemShippingCost = parseFloat(
+          product.content.shipping[0]?.cost || 0
+        );
+
+        return (
+          parseFloat(acc) +
+          itemPrice * qty +
+          itemShippingCost * qty +
+          stallShippingCost
+        );
+        // return itemPrice * qty;
+      }, 0);
+      console.log("grandTotal is:" + grandTotal);
+      setGrandTotal(grandTotal);
+    }
+  }, [stall]);
 
   useEffect(() => {
     const convertUsdToBtc = async () => {
@@ -502,8 +615,10 @@ function OrderSummary(props: {
       }
     };
 
-    convertUsdToBtc();
-  }, []); // Other logic
+    if (stall) {
+      convertUsdToBtc();
+    }
+  }, [stall]); // Other logic
   return (
     <div className="col-12 col-md-4">
       <div className="card order-cart">
