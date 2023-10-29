@@ -158,11 +158,11 @@ function Checkout(props: {
   //   }, []); // Other logic
 
   //   const btcAmount = grandTotal / 26836.345;
-  const btcAmount = parseFloat(localStorage.getItem("btcAmount"));
+  const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
   // const btcAmount = 1000;
   const zapBitshop = async () => {
     try {
-      const btcAmount = parseFloat(localStorage.getItem("btcAmount"));
+      const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
       //   await webln.enable();
       const fees = 0.05;
       const sats = btcAmount !== null ? btcAmount * fees * 10 ** 8 : null;
@@ -177,6 +177,7 @@ function Checkout(props: {
       try {
         await window.webln.enable();
         const result = await window.webln.sendPayment(invoice.payment_request);
+        console.dir(result);
       } catch (error) {
         alert("An error occurred during the payment.");
       }
@@ -188,7 +189,7 @@ function Checkout(props: {
 
   const payMerchant = async () => {
     try {
-      const btcAmount = parseFloat(localStorage.getItem("btcAmount"));
+      const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
       // const sats = btcAmount !== null ? btcAmount : null;
       const sats = btcAmount !== null ? btcAmount * 0.95 * 10 ** 8 : null;
       // const sats = 1000;
@@ -447,9 +448,12 @@ function ProductDetail(props: {
         </span>
       </div>
       <div className="cart-total-dil pt-1">
-        <h4>Item Shipping Costs</h4>
+        <h4>Shipping Costs</h4>
         <span>
-          {itemShippingCost > 0 ? `${itemShippingCost}$ x ${qty}` : "FREE"}
+          {itemShippingCost + stallShippingCost > 0
+            ? `${itemShippingCost * qty + stallShippingCost}`
+            : // ? `${itemShippingCost}$ x ${qty} + ${stallShippingCost}`
+              "FREE"}
         </span>
       </div>
     </div>
@@ -473,8 +477,8 @@ function OrderSummary(props: {
     const stallShippingCost = product.content.shipping[0]?.cost || 0;
     const itemShippingCost = product.content.shipping[0]?.cost || 0;
 
-    // return acc + itemPrice * qty + itemShippingCost * qty + stallShippingCost;
-    return itemPrice * qty;
+    return acc + itemPrice * qty + itemShippingCost * qty + stallShippingCost;
+    // return itemPrice * qty;
   }, 0);
 
   useEffect(() => {
@@ -517,11 +521,17 @@ function OrderSummary(props: {
           </div>
           <div className="main-total-cart">
             <h2>Total</h2>
-            <span>
+            <span title={`Total: ${grandTotal} USD`}>
               {btcAmount !== null && !isNaN(btcAmount) ? (
                 <>
                   {console.log(`BTC amount: ${btcAmount.toFixed(8)}`)}
-                  {btcAmount.toFixed(8)} BTC
+                  {btcAmount.toFixed(8)} BTC{" "}
+                  <span
+                    className="hover-instruction"
+                    style={{ fontSize: "xx-small", color: "gray" }}
+                  >
+                    ℹ️ Hover for USD
+                  </span>
                 </>
               ) : (
                 <>
