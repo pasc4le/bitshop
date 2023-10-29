@@ -122,7 +122,7 @@ const ProductInsert = () => {
   return (
     <div>
       <h2>Key Generation</h2>
-      <p>Run only only once</p>
+      <p>Run only once</p>
       <p>
         BE AWARE of the following things:
         <ul>
