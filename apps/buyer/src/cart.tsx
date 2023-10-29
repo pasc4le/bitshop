@@ -111,7 +111,8 @@ function ProductDetails(props: {
               <p className="text-success stock-text mb-0">In stock</p>
               {/* <p className='shipping-text mb-0'>Eligible for FREE Shipping</p> */}
               <p className="shipping-text mb-0">
-                Shipping: {shippingCost > 0 ? `${shippingCost} $` : "FREE"}
+                Shipping:{" "}
+                {shippingCost > 0 ? `${parseFloat(shippingCost)} $` : "FREE"}
               </p>
               <p>
                 <span className="featured trusted d-inline-block">
