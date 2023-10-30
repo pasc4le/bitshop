@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, FormEvent, ChangeEvent } from "react";
 import Confetti from "react-confetti";
 import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
@@ -10,6 +10,7 @@ import {
   getProductById,
   getStallById,
 } from "./lib/nip15";
+// import { join } from "path";
 
 // const convertUsdToBtc = async (value) => {
 //   try {
@@ -94,6 +95,118 @@ const makeInvoiceMerchant = async (amount, memo) => {
   }
 };
 
+interface DeliveryForm {
+  name: string;
+  email: string;
+  flat: string;
+  street: string;
+  pinCode: string;
+  locality: string;
+}
+
+interface DeliveryFormOptions {
+  required?: boolean;
+}
+
+interface Suggestion {
+  value: string;
+}
+
+interface City {
+  country: string;
+  name: string;
+  lat: string;
+  lng: string;
+}
+
+function FieldWithSuggestions<T extends Suggestion = any>(props: {
+  id: string;
+  name: string,
+  value: string;
+  placeholder: string;
+  setValue: (value: string) => void,
+  getSuggestions: (e: ChangeEvent<HTMLInputElement>) => Promise<T[] | undefined>,
+  required?: boolean
+}) {
+  const [hidden, setHidden] = useState<boolean>(true);
+  const [suggestions, setSuggestions] = useState<T[] | undefined>();
+
+  let timeout: NodeJS.Timeout;
+  const showSuggestions = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length < 3) return;
+
+    if (timeout) clearTimeout(timeout);
+
+    timeout = setTimeout(async () => {
+      const result = await props.getSuggestions(e);
+      if (!result) return;
+
+      setSuggestions(result);
+      setHidden(false);
+      console.log('SUGGESTIONS', result);
+    }, 2000);
+  }
+
+  const handleSuggestionClick = (value: string) => {
+    props.setValue(value);
+    console.log(value);
+  }
+
+  return (
+    <div
+      className="col-lg-6 col-md-12"
+      onMouseEnter={() => setHidden(false)}
+      onMouseLeave={() => setHidden(true)}
+      style={{ position: 'relative' }}
+    >
+      <div className="form-group mb-2">
+        <label className="control-label">
+          {props.name}{props.required && <span className="requied">*</span>}
+        </label>
+        <input
+          id={props.id}
+          name={props.id}
+          type="text"
+          value={props.value}
+          placeholder={props.placeholder}
+          className="form-control input-md"
+          onChange={(e) => {
+            props.setValue(e.target.value);
+            showSuggestions(e);
+          }}
+        />
+        {!hidden && suggestions && (
+          <div
+            style={{
+              position: 'absolute',
+              maxHeight: '20rem',
+              overflow: 'scroll',
+              width: '95%',
+              background: 'white',
+              zIndex: 2
+            }}
+          >
+            {
+              suggestions.map((suggestion, i) => (
+                <div
+                  style={{
+                    cursor: 'pointer',
+                    padding: '10px',
+                  }}
+                  key={`${props.id}-suggestion-${i}`}
+                  onClick={() => handleSuggestionClick(suggestion.value)}
+                >
+                  {suggestion.value}
+                </div>
+              ))
+            }
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function Checkout(props: {
   cartProducts: BitshopCartProduct[];
   events: ProductEvent[];
@@ -113,6 +226,74 @@ function Checkout(props: {
   const [isSecondSuccessful, setIsSecondSuccessful] = useState(false);
   const [showBanner, setShowBanner] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  const deliveryFormOptions: Partial<Record<keyof DeliveryForm, DeliveryFormOptions>> = {};
+
+  const [deliveryForm, setDeliveryForm] = useState<DeliveryForm>({
+    name: '',
+    email: '',
+    flat: '',
+    street: '',
+    pinCode: '',
+    locality: ''
+  });
+
+  const handleFormChange = (value: string, key: keyof DeliveryForm) => {
+    setDeliveryForm({
+      ...deliveryForm,
+      [key]: value,
+    });
+  }
+
+  const parseFormData = (): string[] => {
+    const errors: string[] = [];
+    if (isNaN(btcAmount)) {
+      errors.push('Invalid BTC amount detected.');
+    }
+
+    Object.entries(deliveryForm)
+      .forEach(([key, value]) => {
+        // Default is true
+        if (deliveryFormOptions[key]?.required !== false && !value)
+          errors.push(`"${key}" is required, but not provided`);
+      });
+    return errors;
+  }
+
+  const handleFormSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const errors = parseFormData();
+    // TODO Stylize with a toast
+    if (errors.length > 0) {
+      console.error('Form data is not valid. Reasons: ', errors);
+      alert('Form data is not valid.');
+      return;
+    }
+
+    await finalizePayment();
+    alert('Payment complete!');
+  }
+
+  const finalizePayment = async () => { }
+
+  const getLocalitySuggestions = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!process.env.REACT_APP_API_URL) return undefined;
+
+    const url = new URL(`${process.env.REACT_APP_API_URL}/api/cities`);
+
+    url.searchParams.set('name', e.target.value);
+
+    return await fetch(url)
+      .then((r) => r.status === 200 ? r.json() : undefined)
+      .then((json) => {
+        if (!json) return undefined;
+
+        return (json as City[]).map((city) => ({
+          value: `${city.name}, ${city.country}`
+        }));
+      });
+  }
 
   useEffect(() => {
     const pp = cartProducts.map((cp) => {
@@ -260,13 +441,14 @@ function Checkout(props: {
             <Accordion.Item eventKey="0">
               <Accordion.Header>Delivery Address</Accordion.Header>
               <Accordion.Body>
-                <form className="">
+                <form className="" onSubmit={handleFormSubmit}>
                   <div className="address-fieldset">
                     <div className="row">
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            Name <span className="requied">*</span>
+                            { /* TODO: fix typo */}
+                            Name {deliveryFormOptions.name?.required !== false && <span className="requied">*</span>}
                           </label>
                           <input
                             id="name"
@@ -274,13 +456,15 @@ function Checkout(props: {
                             type="text"
                             placeholder="Name"
                             className="form-control input-md"
+                            onChange={(e) => handleFormChange(e.target.value, 'name')}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            Email Address <span className="requied">*</span>
+                            { /* TODO: fix typo */}
+                            Email Address {deliveryFormOptions.email?.required !== false && <span className="requied">*</span>}
                           </label>
                           <input
                             id="email1"
@@ -288,14 +472,15 @@ function Checkout(props: {
                             type="text"
                             placeholder="Email Address"
                             className="form-control input-md"
+                            onChange={(e) => handleFormChange(e.target.value, 'email')}
                           />
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            Flat / House / Office No.
-                            <span className="requied">*</span>
+                            { /* TODO: fix typo */}
+                            Flat / House / Office No. {deliveryFormOptions.flat?.required !== false && <span className="requied">*</span>}
                           </label>
                           <input
                             id="flat"
@@ -303,13 +488,15 @@ function Checkout(props: {
                             type="text"
                             placeholder="Address"
                             className="form-control input-md"
+                            onChange={(e) => handleFormChange(e.target.value, 'flat')}
                           />
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            Street / Society / Office Name{" "}
+                            { /* TODO: fix typo */}
+                            Street / Society / Office Name {deliveryFormOptions.street?.required !== false && <span className="requied">*</span>}
                             <span className="requied">*</span>
                           </label>
                           <input
@@ -318,13 +505,15 @@ function Checkout(props: {
                             type="text"
                             placeholder="Street Address"
                             className="form-control input-md"
+                            onChange={(e) => handleFormChange(e.target.value, 'street')}
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            Pincode <span className="requied">*</span>
+                            { /* TODO: fix typo */}
+                            Pincode {deliveryFormOptions.pinCode?.required !== false && <span className="requied">*</span>}
                           </label>
                           <input
                             id="pincode"
@@ -332,23 +521,19 @@ function Checkout(props: {
                             type="text"
                             placeholder="Pincode"
                             className="form-control input-md"
+                            onChange={(e) => handleFormChange(e.target.value, 'pinCode')}
                           />
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
-                        <div className="form-group mb-2">
-                          <label className="control-label">
-                            Locality <span className="requied">*</span>
-                          </label>
-                          <input
-                            id="Locality"
-                            name="locality"
-                            type="text"
-                            placeholder="Enter City"
-                            className="form-control input-md"
-                          />
-                        </div>
-                      </div>
+                      <FieldWithSuggestions
+                        id="locality"
+                        name="Locality"
+                        placeholder="Enter city"
+                        required={deliveryFormOptions.locality?.required}
+                        getSuggestions={getLocalitySuggestions}
+                        value={deliveryForm.locality}
+                        setValue={(value) => handleFormChange(value, 'locality')}
+                      />
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group">
                           <div className="text-right">
@@ -438,7 +623,7 @@ function ProductDetail(props: {
     };
 
     convertUsdToBtc();
-  });
+  }, []);
 
   const itemShippingCost = parseFloat(
     props.event.content.shipping.find((s) => s.id === shippingId)?.cost || 0
@@ -486,11 +671,11 @@ function ProductDetail(props: {
         >
           {itemShippingCost + stallShippingCost > 0
             ? `${(
-                (itemShippingCost * qty + stallShippingCost) /
-                btcAmount
-              ).toFixed(8)} BTC`
+              (itemShippingCost * qty + stallShippingCost) /
+              btcAmount
+            ).toFixed(8)} BTC`
             : // ? `${itemShippingCost}$ x ${qty} + ${stallShippingCost}`
-              "FREE"}
+            "FREE"}
         </span>
       </div>
     </div>
