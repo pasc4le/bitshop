@@ -4,7 +4,6 @@ import "./App.css";
 import Header from "./includes/Header";
 import Menu from "./includes/menu";
 import Footer from "./includes/footer";
-import Product from "./product";
 import Details from "./details";
 import Store from "./store";
 import Cart from "./cart";
@@ -18,6 +17,7 @@ import Stall from "./stall";
 import DecryptMnemonic from "./decryptMnemonic";
 import RedirectToForm from "./form";
 import ProductInsert from "./insert_product";
+import Product from "./product";
 
 function App() {
   const [showHeaderFooter, setShowHeaderFooter] = useState(true);
@@ -28,7 +28,6 @@ function App() {
       {showHeaderFooter ? <Menu /> : ""}
       <Router>
         <Routes>
-          <Route exact path="/products" element={<Product />} />
           <Route exact path="/details" element={<Details />} />
           <Route exact path="/store" element={<Store />} />
           <Route exact path="/stall" element={<Stall />} />
@@ -57,6 +56,7 @@ function App() {
             }
           />
           <Route path="*" element={<NoMatch />} />
+          <Route exact path="/products" element={<Product />} />
         </Routes>
       </Router>
       {showHeaderFooter ? <Footer /> : ""}

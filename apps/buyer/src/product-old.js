@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import React from "react";
 import Product from "./component/product/index";
 import p1 from "./images/products/p1.png";
 import p2 from "./images/products/p2.png";
@@ -22,456 +22,406 @@ import {
 import { eventKind, NostrFetcher } from "nostr-fetch";
 // import { each } from "jquery";
 
-function ProductPage() {
-  function reformatJson(originalJsonString) {
-    try {
-      // Parse the original JSON string into an object
-      let originalJsonObject = JSON.parse(originalJsonString);
+const nHoursAgo = (hrs: number): number =>
+  Math.floor((Date.now() - hrs * 60 * 60 * 1000) / 1000);
 
-      // Create a new object to hold the formatted data
-      let formattedJsonObject = {};
+function reformatJson(originalJsonString) {
+  try {
+    // Parse the original JSON string into an object
+    let originalJsonObject = JSON.parse(originalJsonString);
 
-      // List of keys expected to be present in the original JSON object
-      let expectedKeys = [
-        "id",
-        "stall_id",
-        "name",
-        "currency",
-        "price",
-        "quantity",
-        "description",
-        "images",
-        "shipping",
-        "categories",
-        "specs",
-      ];
+    // Create a new object to hold the formatted data
+    let formattedJsonObject = {};
 
-      // Check if all expected keys are present in the original JSON object
-      for (let key of expectedKeys) {
-        if (key == "images") {
-          if (!originalJsonObject.hasOwnProperty(key)) {
-            throw new Error(`Missing expected key: ${key}`);
-          }
+    // List of keys expected to be present in the original JSON object
+    let expectedKeys = [
+      "id",
+      "stall_id",
+      "name",
+      "currency",
+      "price",
+      "quantity",
+      "description",
+      "images",
+      "shipping",
+      "categories",
+      "specs",
+    ];
+
+    // Check if all expected keys are present in the original JSON object
+    for (let key of expectedKeys) {
+      if (key == "images") {
+        if (!originalJsonObject.hasOwnProperty(key)) {
+          throw new Error(`Missing expected key: ${key}`);
         }
       }
-
-      // Copy the fields that do not need reformatting directly from the original object
-      for (let key of expectedKeys.filter((key) => key !== "specs")) {
-        formattedJsonObject[key] = originalJsonObject[key];
-      }
-
-      // Reformat the specs field
-      formattedJsonObject.specs = {};
-      if (!Array.isArray(originalJsonObject.specs)) {
-        throw new Error("Specs field is not an array");
-      }
-      for (let pair of originalJsonObject.specs) {
-        if (!Array.isArray(pair) || pair.length !== 2) {
-          throw new Error("Specs field contains invalid data");
-        }
-        formattedJsonObject.specs[pair[0]] = pair[1];
-      }
-
-      // Correct the typo in the description
-      formattedJsonObject.description = formattedJsonObject.description.replace(
-        "classi",
-        "classic"
-      );
-
-      // Stringify the formatted object to get the final JSON string
-      let formattedJsonString = JSON.stringify(formattedJsonObject, null, 4); // The arguments null and 4 are for formatting the output with 4-space indentation
-
-      // Return the formatted JSON string
-      return formattedJsonString;
-    } catch (error) {
-      console.error(error.message); // Log the error message to the console
-      return null; // Return null if an error occurs
     }
-  }
 
-  function transformData(inputData) {
-    //   console.log("transforming data");
-    //   console.log(`in transform data, inputData content is\n${inputData.content}`);
-    try {
-      // Parse and reformat the content key
-      const reformattedContentString = reformatJson(inputData.content);
-      const reformattedContentObject = JSON.parse(reformattedContentString);
-
-      // console.log(`inputData id is: ${inputData.id}`);
-      // Construct the desired output format
-      // console.log(`Formatted JSON: ${reformattedContentString}`);
-      if (reformattedContentObject != null) {
-        const outputData = {
-          // id: inputData.id,
-          id: reformattedContentObject.id ? reformattedContentObject.id : "",
-          title: reformattedContentObject.name
-            ? reformattedContentObject.name
-            : "no Name",
-          categoryName: reformattedContentObject.categories
-            ? reformattedContentObject.categories[0]
-            : "no category", // Assuming the first category is the primary category
-          imgSrc: reformattedContentObject.images
-            ? reformattedContentObject.images[0]
-            : "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg", // Assuming the first image is the primary image
-          isFeatured: "Yes",
-          ratings: 4,
-        };
-        //   console.log(`output data: ${JSON.stringify(outputData)}`);
-
-        return outputData;
-      } else {
-        console.error("null data");
-        return null;
-      }
-    } catch (error) {
-      console.error(error.message);
-      return null;
+    // Copy the fields that do not need reformatting directly from the original object
+    for (let key of expectedKeys.filter((key) => key !== "specs")) {
+      formattedJsonObject[key] = originalJsonObject[key];
     }
-  }
 
-  // Usage
-  // let originalJsonString = `...`;  // Your original JSON string
-  // let formattedJsonString = reformatJson(originalJsonString);
-  // console.log(formattedJsonString);
+    // Reformat the specs field
+    formattedJsonObject.specs = {};
+    if (!Array.isArray(originalJsonObject.specs)) {
+      throw new Error("Specs field is not an array");
+    }
+    for (let pair of originalJsonObject.specs) {
+      if (!Array.isArray(pair) || pair.length !== 2) {
+        throw new Error("Specs field contains invalid data");
+      }
+      formattedJsonObject.specs[pair[0]] = pair[1];
+    }
 
-  const fetcher = NostrFetcher.init();
-  const relayUrls = [
-    "wss://relay.snort.social",
-    "wss://nostr-1.nbo.angani.co",
-    "wss://eden.nostr.land",
-    "wss://nos.lol",
-    //   "wss://brb.io",
-    "wss://nostr.fmt.wiz.biz",
-    "wss://relay.damus.io",
-    "wss://nostr.wine",
-    "wss://sg.qemura.xyz",
-  ];
-
-  // // fetches all text events since 24 hr ago in streaming manner
-  // const postIter = fetcher.allEventsIterator(
-  //   relayUrls,
-  //   /* filter (kinds, authors, ids, tags) */
-  //   { kinds: [eventKind.text] },
-  //   /* time range filter (since, until) */
-  //   { since: nHoursAgo(24) },
-  //   /* fetch options (optional) */
-  //   { skipVerification: true }
-  // );
-  // for await (const ev of postIter) {
-  //   console.log(ev.content);
-  // }
-
-  // // fetches all text events since 24 hr ago, as a single array
-  // const hours = 10;
-  // console.log(
-  //   `Fetching 300180 kind posts in the last ${hours} hours from nostr relays`
-  // );
-
-  // const products = await fetcher.fetchAllEvents(
-  //   relayUrls,
-  //   /* filter */
-  //   { kinds: [300180] },
-  //   /* time range filter */
-  //   { since: nHoursAgo(hours) },
-  //   /* fetch options (optional) */
-  //   { sort: true }
-  // );
-
-  const nPosts = 100;
-  console.log(`Fetching last ${nPosts} 300180-kind posts  from nostr relays`);
-
-  // TODO: fix it; was just for demo!
-  // localStorage.setItem("bitshop-cart", "{}");
-  // fetches latest 100 text posts
-  // internally:
-  // 1. fetch latest 100 events from each relay
-  // 2. merge lists of events
-  // 3. take latest 100 events
-
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-    async function main() {
-      // Fetching Data Asynchronously (if fetcher.fetchLatestEvents can be parallelized)
-      // const fetchPromises = relayUrls.map((url) =>
-      //   fetcher.fetchLatestEvents(url, { kinds: [300180] }, nPosts)
-      // );
-
-      // let productsRaw = [];
-      // for (const url of relayUrls) {
-      //   const data = await fetcher.fetchLatestEvents(
-      //     url,
-      //     { kinds: [300180] },
-      //     nPosts
-      //   );
-      //   productsRaw = productsRaw.concat(data);
-      // }
-    const productsRaw: NostrEvent[] =  await fetcher.fetchLatestEvents(
-      relayUrls,
-      /* filter */
-      { kinds: [300180] },
-      /* number of events to fetch */
-      nPosts
+    // Correct the typo in the description
+    formattedJsonObject.description = formattedJsonObject.description.replace(
+      "classi",
+      "classic"
     );
 
-    
-      // const allProductsRaw = await Promise.all(fetchPromises);
+    // Stringify the formatted object to get the final JSON string
+    let formattedJsonString = JSON.stringify(formattedJsonObject, null, 4); // The arguments null and 4 are for formatting the output with 4-space indentation
 
-      // // Flatten the array and filter the products based on some condition if needed
-      // const productsRaw = [].concat(...allProductsRaw);
+    // Return the formatted JSON string
+    return formattedJsonString;
+  } catch (error) {
+    console.error(error.message); // Log the error message to the console
+    return null; // Return null if an error occurs
+  }
+}
 
-      console.log("latest posts:\n", productsRaw);
+function transformData(inputData) {
+  //   console.log("transforming data");
+  //   console.log(`in transform data, inputData content is\n${inputData.content}`);
+  try {
+    // Parse and reformat the content key
+    const reformattedContentString = reformatJson(inputData.content);
+    const reformattedContentObject = JSON.parse(reformattedContentString);
 
-      // Transforming Data Asynchronously
-      const transformPromises = productsRaw.map(async (eachJSON) => {
-        return transformData(eachJSON);
-      });
+    // console.log(`inputData id is: ${inputData.id}`);
+    // Construct the desired output format
+    // console.log(`Formatted JSON: ${reformattedContentString}`);
+    if (reformattedContentObject != null) {
+      const outputData = {
+        // id: inputData.id,
+        id: reformattedContentObject.id ? reformattedContentObject.id : "",
+        title: reformattedContentObject.name
+          ? reformattedContentObject.name
+          : "no Name",
+        categoryName: reformattedContentObject.categories
+          ? reformattedContentObject.categories[0]
+          : "no category", // Assuming the first category is the primary category
+        imgSrc: reformattedContentObject.images
+          ? reformattedContentObject.images[0]
+          : "https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg", // Assuming the first image is the primary image
+        isFeatured: "Yes",
+        ratings: 4,
+      };
+      //   console.log(`output data: ${JSON.stringify(outputData)}`);
 
-      const transformedProducts = await Promise.all(transformPromises);
-
-      // Filter out any null or undefined values, assuming transformData may return null or undefined
-      const products = transformedProducts.filter(Boolean);
-      setProducts(products);
-
-      console.log("Transformed products:", products);
+      return outputData;
+    } else {
+      console.error("null data");
+      return null;
     }
+  } catch (error) {
+    console.error(error.message);
+    return null;
+  }
+}
 
-    // const productsRaw: NostrEvent[] =  await fetcher.fetchLatestEvents(
-    //   relayUrls,
-    //   /* filter */
-    //   { kinds: [300180] },
-    //   /* number of events to fetch */
-    //   nPosts
-    // );
+// Usage
+// let originalJsonString = `...`;  // Your original JSON string
+// let formattedJsonString = reformatJson(originalJsonString);
+// console.log(formattedJsonString);
 
-    // console.log("latest posts:\n", productsRaw);
+const fetcher = NostrFetcher.init();
+const relayUrls = [
+  "wss://relay.snort.social",
+  "wss://nostr-1.nbo.angani.co",
+  "wss://eden.nostr.land",
+  "wss://nos.lol",
+  //   "wss://brb.io",
+  "wss://nostr.fmt.wiz.biz",
+  "wss://relay.damus.io",
+  "wss://nostr.wine",
+  "wss://sg.qemura.xyz",
+];
 
-    // // Create an empty array called products
-    // var products = [];
+// // fetches all text events since 24 hr ago in streaming manner
+// const postIter = fetcher.allEventsIterator(
+//   relayUrls,
+//   /* filter (kinds, authors, ids, tags) */
+//   { kinds: [eventKind.text] },
+//   /* time range filter (since, until) */
+//   { since: nHoursAgo(24) },
+//   /* fetch options (optional) */
+//   { skipVerification: true }
+// );
+// for await (const ev of postIter) {
+//   console.log(ev.content);
+// }
 
-    // // Perform operations on each JSON in productsRaw
-    // for (let eachJSON of productsRaw) {
-    //   //   console.log(`inputdata:${JSON.stringify(eachJSON)}`);
-    //   // Call your functions on eachJSON
-    //   // const reformattedContentString = reformatJson(eachJSON.content);
-    //   const transformedData = transformData(eachJSON); // Assuming transformData is the function you'll use
+// // fetches all text events since 24 hr ago, as a single array
+// const hours = 10;
+// console.log(
+//   `Fetching 300180 kind posts in the last ${hours} hours from nostr relays`
+// );
 
-    //   // Optionally, you may want to add the transformed data to the products array
-    //   if (transformData != null) {
-    //     products.push(transformedData);
-    //     // console.log(`Current products: ${products}`);
-    //   }
-    // }
+// const products = await fetcher.fetchAllEvents(
+//   relayUrls,
+//   /* filter */
+//   { kinds: [300180] },
+//   /* time range filter */
+//   { since: nHoursAgo(hours) },
+//   /* fetch options (optional) */
+//   { sort: true }
+// );
 
-    // main().catch((err) => console.error(err));
-    main();
-  }, []); // dependency array
+const nPosts = 100;
+console.log(`Fetching last ${nPosts} 300180-kind posts  from nostr relays`);
 
-  // {
-  //     "content": "{\"id\":\"ee7d6f4b-bd71-412b-8500-848fe8c9b0ab\",\"stall_id\":\"99db3c35-4be5-4eb3-9d6b-16cb5dc76327\",\"name\":\"Samsung Galaxy S23 128GB Black\",\"currency\":\"USD\",\"price\":799,\"quantity\":5,\"specs\":[[\"Operating System\",\"Android 13\"],[\"RAM\",\"6GB\"],[\"Storage\",\"128GB\"]],\"description\":\"Enjoy your S23 in the most classi and elegant color for smartphones\",\"images\":[\"https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg\",\"https://m.media-amazon.com/images/I/61vjj+u+0YL._AC_SL1500_.jpg\"],\"shipping\":[],\"categories\":[\"Smartphones\",\"Samsung\",\"Galaxy\",\"S23\"]}",
-  //     "created_at": 1696960502,
-  //     "id": "cd8925f24b9f3b730bee1955999161400909f654b642f112e7708d56e389b60b",
-  //     "kind": 300180,
-  //     "pubkey": "021ef934ac601060430194d42056abeaa4068286fe0d22f537b6751310456147",
-  //     "sig": "67816417a7d9a631f082e866f844953826df39188399275021102562083b6882f422fe050ca385a9e6aee839ef39b58ecedbd05ce84e16245b17375dcfd9333f",
-  //     "tags": [
-  //         [
-  //             "d",
-  //             "ee7d6f4b-bd71-412b-8500-848fe8c9b0ab"
-  //         ],
-  //         [
-  //             "t",
-  //             "Smartphones"
-  //         ],
-  //         [
-  //             "t",
-  //             "Samsung"
-  //         ],
-  //         [
-  //             "t",
-  //             "Galaxy"
-  //         ],
-  //         [
-  //             "t",
-  //             "S23"
-  //         ]
-  //     ]
-  // }
+// TODO: fix it; was just for demo!
+// localStorage.setItem("bitshop-cart", "{}");
+// fetches latest 100 text posts
+// internally:
+// 1. fetch latest 100 events from each relay
+// 2. merge lists of events
+// 3. take latest 100 events
+const productsRaw: NostrEvent[] =  await fetcher.fetchLatestEvents(
+  relayUrls,
+  /* filter */
+  { kinds: [300180] },
+  /* number of events to fetch */
+  nPosts
+);
 
-  // {
-  //     "id": "ee7d6f4b-bd71-412b-8500-848fe8c9b0ab",
-  //     "stall_id": "99db3c35-4be5-4eb3-9d6b-16cb5dc76327",
-  //     "name": "Samsung Galaxy S23 128GB Black",
-  //     "currency": "USD",
-  //     "price": 799,
-  //     "quantity": 5,
-  //     "specs": {
-  //         "Operating System": "Android 13",
-  //         "RAM": "6GB",
-  //         "Storage": "128GB"
-  //     },
-  //     "description": "Enjoy your S23 in the most classic and elegant color for smartphones",
-  //     "images": [
-  //         "https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg",
-  //         "https://m.media-amazon.com/images/I/61vjj+u+0YL._AC_SL1500_.jpg"
-  //     ],
-  //     "shipping": [],
-  //     "categories": [
-  //         "Smartphones",
-  //         "Samsung",
-  //         "Galaxy",
-  //         "S23"
-  //     ]
-  // }
+console.log("latest posts:\n", productsRaw);
 
-  // {
-  //     id = "cd8925f24b9f3b730bee1955999161400909f654b642f112e7708d56e389b60b",
-  //     title: "Samsung Galaxy S23 128GB Black",
-  //     categoryName: "Smartphones",
-  //     imgSrc: "https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg",
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  // }
-  // console.log("products:\n", products);
-  // products
-  // const products = [
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p1,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p2,
-  //     isFeatured: "No",
-  //     ratings: 2,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p3,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p4,
-  //     isFeatured: "No",
-  //     ratings: 3,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p5,
-  //     isFeatured: "No",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p6,
-  //     isFeatured: "No",
-  //     ratings: 3,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p7,
-  //     isFeatured: "Yes",
-  //     ratings: 2,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p8,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p9,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p7,
-  //     isFeatured: "Yes",
-  //     ratings: 2,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p1,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p2,
-  //     isFeatured: "No",
-  //     ratings: 2,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p3,
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p4,
-  //     isFeatured: "No",
-  //     ratings: 3,
-  //   },
-  //   {
-  //     title: "Universal Headphones Case in Black",
-  //     categoryName: "Headphone Cases",
-  //     imgSrc: p5,
-  //     isFeatured: "No",
-  //     ratings: 4,
-  //   },
-  // // ];
+// Create an empty array called products
+var products = [];
 
-  console.dir(products);
-  // products = [
-  //   {
-  //     id: "c8e276a61d1c09aa2e6143d525675533f66934b0bc7b1df27f58dd216fd565c7",
-  //     title: "iPhone 14",
-  //     categoryName: "no category",
-  //     imgSrc: "https://m.media-amazon.com/images/I/61cwywLZR-L._AC_SX679_.jpg",
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     id: "1ad685cc8c3c0f2b7fbb9408abf60304d791721732b61181fcc2439a668616a6",
-  //     title: "iPhone 14 128GB Black",
-  //     categoryName: "no category",
-  //     imgSrc:
-  //       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/refurb-iphone-13-starlight-2023?wid=572&hei=572&fmt=jpeg&qlt=95&.v=1679072987025",
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  //   {
-  //     id: "1df050642a740d832108d8221b1adb19717da7f57ade1ef1566d8b87b59d6967",
-  //     title: "iPhone 14 128GB Black",
-  //     categoryName: "no category",
-  //     imgSrc:
-  //       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/refurb-iphone-13-starlight-2023?wid=572&hei=572&fmt=jpeg&qlt=95&.v=1679072987025",
-  //     isFeatured: "Yes",
-  //     ratings: 4,
-  //   },
-  // ];
-  console.log(`products:\n${products}`);
+// Perform operations on each JSON in productsRaw
+for (let eachJSON of productsRaw) {
+  //   console.log(`inputdata:${JSON.stringify(eachJSON)}`);
+  // Call your functions on eachJSON
+  // const reformattedContentString = reformatJson(eachJSON.content);
+  const transformedData = transformData(eachJSON); // Assuming transformData is the function you'll use
 
+  // Optionally, you may want to add the transformed data to the products array
+  if (transformData != null) {
+    products.push(transformedData);
+    // console.log(`Current products: ${products}`);
+  }
+}
+// {
+//     "content": "{\"id\":\"ee7d6f4b-bd71-412b-8500-848fe8c9b0ab\",\"stall_id\":\"99db3c35-4be5-4eb3-9d6b-16cb5dc76327\",\"name\":\"Samsung Galaxy S23 128GB Black\",\"currency\":\"USD\",\"price\":799,\"quantity\":5,\"specs\":[[\"Operating System\",\"Android 13\"],[\"RAM\",\"6GB\"],[\"Storage\",\"128GB\"]],\"description\":\"Enjoy your S23 in the most classi and elegant color for smartphones\",\"images\":[\"https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg\",\"https://m.media-amazon.com/images/I/61vjj+u+0YL._AC_SL1500_.jpg\"],\"shipping\":[],\"categories\":[\"Smartphones\",\"Samsung\",\"Galaxy\",\"S23\"]}",
+//     "created_at": 1696960502,
+//     "id": "cd8925f24b9f3b730bee1955999161400909f654b642f112e7708d56e389b60b",
+//     "kind": 300180,
+//     "pubkey": "021ef934ac601060430194d42056abeaa4068286fe0d22f537b6751310456147",
+//     "sig": "67816417a7d9a631f082e866f844953826df39188399275021102562083b6882f422fe050ca385a9e6aee839ef39b58ecedbd05ce84e16245b17375dcfd9333f",
+//     "tags": [
+//         [
+//             "d",
+//             "ee7d6f4b-bd71-412b-8500-848fe8c9b0ab"
+//         ],
+//         [
+//             "t",
+//             "Smartphones"
+//         ],
+//         [
+//             "t",
+//             "Samsung"
+//         ],
+//         [
+//             "t",
+//             "Galaxy"
+//         ],
+//         [
+//             "t",
+//             "S23"
+//         ]
+//     ]
+// }
+
+// {
+//     "id": "ee7d6f4b-bd71-412b-8500-848fe8c9b0ab",
+//     "stall_id": "99db3c35-4be5-4eb3-9d6b-16cb5dc76327",
+//     "name": "Samsung Galaxy S23 128GB Black",
+//     "currency": "USD",
+//     "price": 799,
+//     "quantity": 5,
+//     "specs": {
+//         "Operating System": "Android 13",
+//         "RAM": "6GB",
+//         "Storage": "128GB"
+//     },
+//     "description": "Enjoy your S23 in the most classic and elegant color for smartphones",
+//     "images": [
+//         "https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg",
+//         "https://m.media-amazon.com/images/I/61vjj+u+0YL._AC_SL1500_.jpg"
+//     ],
+//     "shipping": [],
+//     "categories": [
+//         "Smartphones",
+//         "Samsung",
+//         "Galaxy",
+//         "S23"
+//     ]
+// }
+
+// {
+//     id = "cd8925f24b9f3b730bee1955999161400909f654b642f112e7708d56e389b60b",
+//     title: "Samsung Galaxy S23 128GB Black",
+//     categoryName: "Smartphones",
+//     imgSrc: "https://m.media-amazon.com/images/I/61xk5l4aXOL._AC_SL1500_.jpg",
+//     isFeatured: "Yes",
+//     ratings: 4,
+// }
+// console.log("products:\n", products);
+// products
+// const products = [
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p1,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p2,
+//     isFeatured: "No",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p3,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p4,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p5,
+//     isFeatured: "No",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p6,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p7,
+//     isFeatured: "Yes",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p8,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p9,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p7,
+//     isFeatured: "Yes",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p1,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p2,
+//     isFeatured: "No",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p3,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p4,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p5,
+//     isFeatured: "No",
+//     ratings: 4,
+//   },
+// // ];
+
+console.dir(products);
+// products = [
+//   {
+//     id: "c8e276a61d1c09aa2e6143d525675533f66934b0bc7b1df27f58dd216fd565c7",
+//     title: "iPhone 14",
+//     categoryName: "no category",
+//     imgSrc: "https://m.media-amazon.com/images/I/61cwywLZR-L._AC_SX679_.jpg",
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     id: "1ad685cc8c3c0f2b7fbb9408abf60304d791721732b61181fcc2439a668616a6",
+//     title: "iPhone 14 128GB Black",
+//     categoryName: "no category",
+//     imgSrc:
+//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/refurb-iphone-13-starlight-2023?wid=572&hei=572&fmt=jpeg&qlt=95&.v=1679072987025",
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     id: "1df050642a740d832108d8221b1adb19717da7f57ade1ef1566d8b87b59d6967",
+//     title: "iPhone 14 128GB Black",
+//     categoryName: "no category",
+//     imgSrc:
+//       "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/refurb-iphone-13-starlight-2023?wid=572&hei=572&fmt=jpeg&qlt=95&.v=1679072987025",
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+// ];
+console.log(`products:\n${products}`);
+
+function ProductPage() {
   return (
     <div className="p-main-wrap container mt-3">
       <nav className="breadcrumb-wrap" aria-label="breadcrumb">
@@ -533,20 +483,16 @@ function ProductPage() {
 
         <div className="product-wrap mt-4">
           <div className="row">
-            {products.length > 0 ? (
-              products.map((product) => {
-                console.log(`product to component:\n${product}`);
+            {products.map((product) => {
+              console.log(`product to component:\n${product}`);
+              if (product != null) {
                 return (
                   <div className="col-6 col-md-3 col-lg-2">
                     <Product product={product} />
                   </div>
                 );
-              })
-            ) : (
-              <div>
-                <p>Loading Products from Nostr...</p><div className="spinner"></div>
-              </div>
-            )}
+              }
+            })}
             {/* <div className='col-6 col-md'>
                         <a href='#' className='p-box'>
                             <span className='p-cat mb-0 d-block'>Laptops</span>
