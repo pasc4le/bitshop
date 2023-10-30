@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import slide1 from "../../images/slide1.png";
 import p from "../../images/details/p.png";
 import b1 from "../../images/b1.png";
@@ -72,7 +73,12 @@ function HomeBanner(args) {
             <h5>
               <strong>0.00173724 BTC</strong>
             </h5>
-            <button className="btn btn-theme mt-3 mb-4">Start Building</button>
+            <button
+              className="btn btn-theme mt-3 mb-4"
+              onClick={() => (window.location.href = "/products")}
+            >
+              Start Shopping
+            </button>
           </div>
           <div className="col-12 col-md-6 slider-image">
             <img src={item.src} alt={item.altText} />
