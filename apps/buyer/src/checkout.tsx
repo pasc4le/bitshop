@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, FormEvent, ChangeEvent } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  FormEvent,
+  ChangeEvent,
+} from "react";
 import Confetti from "react-confetti";
 import axios from "axios";
 import Accordion from "react-bootstrap/Accordion";
@@ -121,12 +129,14 @@ interface City {
 
 function FieldWithSuggestions<T extends Suggestion = any>(props: {
   id: string;
-  name: string,
+  name: string;
   value: string;
   placeholder: string;
-  setValue: (value: string) => void,
-  getSuggestions: (e: ChangeEvent<HTMLInputElement>) => Promise<T[] | undefined>,
-  required?: boolean
+  setValue: (value: string) => void;
+  getSuggestions: (
+    e: ChangeEvent<HTMLInputElement>
+  ) => Promise<T[] | undefined>;
+  required?: boolean;
 }) {
   const [hidden, setHidden] = useState<boolean>(true);
   const [suggestions, setSuggestions] = useState<T[] | undefined>();
@@ -143,25 +153,26 @@ function FieldWithSuggestions<T extends Suggestion = any>(props: {
 
       setSuggestions(result);
       setHidden(false);
-      console.log('SUGGESTIONS', result);
+      console.log("SUGGESTIONS", result);
     }, 2000);
-  }
+  };
 
   const handleSuggestionClick = (value: string) => {
     props.setValue(value);
     console.log(value);
-  }
+  };
 
   return (
     <div
       className="col-lg-6 col-md-12"
       onMouseEnter={() => setHidden(false)}
       onMouseLeave={() => setHidden(true)}
-      style={{ position: 'relative' }}
+      style={{ position: "relative" }}
     >
       <div className="form-group mb-2">
         <label className="control-label">
-          {props.name}{props.required && <span className="requied">*</span>}
+          {props.name}
+          {props.required && <span className="requied">*</span>}
         </label>
         <input
           id={props.id}
@@ -178,33 +189,31 @@ function FieldWithSuggestions<T extends Suggestion = any>(props: {
         {!hidden && suggestions && (
           <div
             style={{
-              position: 'absolute',
-              maxHeight: '20rem',
-              overflow: 'scroll',
-              width: '95%',
-              background: 'white',
-              zIndex: 2
+              position: "absolute",
+              maxHeight: "20rem",
+              overflow: "scroll",
+              width: "95%",
+              background: "white",
+              zIndex: 2,
             }}
           >
-            {
-              suggestions.map((suggestion, i) => (
-                <div
-                  style={{
-                    cursor: 'pointer',
-                    padding: '10px',
-                  }}
-                  key={`${props.id}-suggestion-${i}`}
-                  onClick={() => handleSuggestionClick(suggestion.value)}
-                >
-                  {suggestion.value}
-                </div>
-              ))
-            }
+            {suggestions.map((suggestion, i) => (
+              <div
+                style={{
+                  cursor: "pointer",
+                  padding: "10px",
+                }}
+                key={`${props.id}-suggestion-${i}`}
+                onClick={() => handleSuggestionClick(suggestion.value)}
+              >
+                {suggestion.value}
+              </div>
+            ))}
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }
 
 function Checkout(props: {
@@ -227,15 +236,17 @@ function Checkout(props: {
   const [showBanner, setShowBanner] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const deliveryFormOptions: Partial<Record<keyof DeliveryForm, DeliveryFormOptions>> = {};
+  const deliveryFormOptions: Partial<
+    Record<keyof DeliveryForm, DeliveryFormOptions>
+  > = {};
 
   const [deliveryForm, setDeliveryForm] = useState<DeliveryForm>({
-    name: '',
-    email: '',
-    flat: '',
-    street: '',
-    pinCode: '',
-    locality: ''
+    name: "",
+    email: "",
+    flat: "",
+    street: "",
+    pinCode: "",
+    locality: "",
   });
 
   const handleFormChange = (value: string, key: keyof DeliveryForm) => {
@@ -243,22 +254,21 @@ function Checkout(props: {
       ...deliveryForm,
       [key]: value,
     });
-  }
+  };
 
   const parseFormData = (): string[] => {
     const errors: string[] = [];
     if (isNaN(btcAmount)) {
-      errors.push('Invalid BTC amount detected.');
+      errors.push("Invalid BTC amount detected.");
     }
 
-    Object.entries(deliveryForm)
-      .forEach(([key, value]) => {
-        // Default is true
-        if (deliveryFormOptions[key]?.required !== false && !value)
-          errors.push(`"${key}" is required, but not provided`);
-      });
+    Object.entries(deliveryForm).forEach(([key, value]) => {
+      // Default is true
+      if (deliveryFormOptions[key]?.required !== false && !value)
+        errors.push(`"${key}" is required, but not provided`);
+    });
     return errors;
-  }
+  };
 
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -266,34 +276,34 @@ function Checkout(props: {
     const errors = parseFormData();
     // TODO Stylize with a toast
     if (errors.length > 0) {
-      console.error('Form data is not valid. Reasons: ', errors);
-      alert('Form data is not valid.');
+      console.error("Form data is not valid. Reasons: ", errors);
+      alert("Form data is not valid.");
       return;
     }
 
     await finalizePayment();
-    alert('Payment complete!');
-  }
+    alert("Payment complete!");
+  };
 
-  const finalizePayment = async () => { }
+  const finalizePayment = async () => {};
 
   const getLocalitySuggestions = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!process.env.REACT_APP_API_URL) return undefined;
 
     const url = new URL(`${process.env.REACT_APP_API_URL}/api/cities`);
 
-    url.searchParams.set('name', e.target.value);
+    url.searchParams.set("name", e.target.value);
 
     return await fetch(url)
-      .then((r) => r.status === 200 ? r.json() : undefined)
+      .then((r) => (r.status === 200 ? r.json() : undefined))
       .then((json) => {
         if (!json) return undefined;
 
         return (json as City[]).map((city) => ({
-          value: `${city.name}, ${city.country}`
+          value: `${city.name}, ${city.country}`,
         }));
       });
-  }
+  };
 
   useEffect(() => {
     const pp = cartProducts.map((cp) => {
@@ -447,8 +457,11 @@ function Checkout(props: {
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            { /* TODO: fix typo */}
-                            Name {deliveryFormOptions.name?.required !== false && <span className="requied">*</span>}
+                            {/* TODO: fix typo */}
+                            Name{" "}
+                            {deliveryFormOptions.name?.required !== false && (
+                              <span className="requied">*</span>
+                            )}
                           </label>
                           <input
                             id="name"
@@ -456,15 +469,20 @@ function Checkout(props: {
                             type="text"
                             placeholder="Name"
                             className="form-control input-md"
-                            onChange={(e) => handleFormChange(e.target.value, 'name')}
+                            onChange={(e) =>
+                              handleFormChange(e.target.value, "name")
+                            }
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            { /* TODO: fix typo */}
-                            Email Address {deliveryFormOptions.email?.required !== false && <span className="requied">*</span>}
+                            {/* TODO: fix typo */}
+                            Email Address{" "}
+                            {deliveryFormOptions.email?.required !== false && (
+                              <span className="requied">*</span>
+                            )}
                           </label>
                           <input
                             id="email1"
@@ -472,15 +490,20 @@ function Checkout(props: {
                             type="text"
                             placeholder="Email Address"
                             className="form-control input-md"
-                            onChange={(e) => handleFormChange(e.target.value, 'email')}
+                            onChange={(e) =>
+                              handleFormChange(e.target.value, "email")
+                            }
                           />
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            { /* TODO: fix typo */}
-                            Flat / House / Office No. {deliveryFormOptions.flat?.required !== false && <span className="requied">*</span>}
+                            {/* TODO: fix typo */}
+                            Flat / House / Office No.{" "}
+                            {deliveryFormOptions.flat?.required !== false && (
+                              <span className="requied">*</span>
+                            )}
                           </label>
                           <input
                             id="flat"
@@ -488,15 +511,20 @@ function Checkout(props: {
                             type="text"
                             placeholder="Address"
                             className="form-control input-md"
-                            onChange={(e) => handleFormChange(e.target.value, 'flat')}
+                            onChange={(e) =>
+                              handleFormChange(e.target.value, "flat")
+                            }
                           />
                         </div>
                       </div>
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            { /* TODO: fix typo */}
-                            Street / Society / Office Name {deliveryFormOptions.street?.required !== false && <span className="requied">*</span>}
+                            {/* TODO: fix typo */}
+                            Street / Society / Office Name{" "}
+                            {deliveryFormOptions.street?.required !== false && (
+                              <span className="requied">*</span>
+                            )}
                             <span className="requied">*</span>
                           </label>
                           <input
@@ -505,15 +533,19 @@ function Checkout(props: {
                             type="text"
                             placeholder="Street Address"
                             className="form-control input-md"
-                            onChange={(e) => handleFormChange(e.target.value, 'street')}
+                            onChange={(e) =>
+                              handleFormChange(e.target.value, "street")
+                            }
                           />
                         </div>
                       </div>
                       <div className="col-lg-6 col-md-12">
                         <div className="form-group mb-2">
                           <label className="control-label">
-                            { /* TODO: fix typo */}
-                            Pincode {deliveryFormOptions.pinCode?.required !== false && <span className="requied">*</span>}
+                            {/* TODO: fix typo */}
+                            Pincode{" "}
+                            {deliveryFormOptions.pinCode?.required !==
+                              false && <span className="requied">*</span>}
                           </label>
                           <input
                             id="pincode"
@@ -521,7 +553,9 @@ function Checkout(props: {
                             type="text"
                             placeholder="Pincode"
                             className="form-control input-md"
-                            onChange={(e) => handleFormChange(e.target.value, 'pinCode')}
+                            onChange={(e) =>
+                              handleFormChange(e.target.value, "pinCode")
+                            }
                           />
                         </div>
                       </div>
@@ -532,7 +566,9 @@ function Checkout(props: {
                         required={deliveryFormOptions.locality?.required}
                         getSuggestions={getLocalitySuggestions}
                         value={deliveryForm.locality}
-                        setValue={(value) => handleFormChange(value, 'locality')}
+                        setValue={(value) =>
+                          handleFormChange(value, "locality")
+                        }
                       />
                       <div className="col-lg-12 col-md-12">
                         <div className="form-group">
@@ -671,11 +707,11 @@ function ProductDetail(props: {
         >
           {itemShippingCost + stallShippingCost > 0
             ? `${(
-              (itemShippingCost * qty + stallShippingCost) /
-              btcAmount
-            ).toFixed(8)} BTC`
+                (itemShippingCost * qty + stallShippingCost) /
+                btcAmount
+              ).toFixed(8)} BTC`
             : // ? `${itemShippingCost}$ x ${qty} + ${stallShippingCost}`
-            "FREE"}
+              "FREE"}
         </span>
       </div>
     </div>
@@ -690,7 +726,7 @@ function OrderSummary(props: {
   // const [btcAmount, setBtcAmount] = useBtc();
 
   const [stall, setStall] = useState<StallEvent>();
-  const [btcAmount, setBtcAmount] = useState<number | null>(null);
+  const [btcAmount, setBtcAmount] = useState<number | null>(0);
   const shipping_zone_id = props.cartProducts[0].shipping_zone_id;
   const [grandTotal, setGrandTotal] = useState();
 
@@ -836,7 +872,13 @@ function OrderSummary(props: {
               ) : (
                 <>
                   {console.error("Error: Invalid BTC amount")}
-                  Error: Invalid BTC amount
+                  <div class="spinner"></div>
+                  <span
+                    className="hover-instruction"
+                    style={{ fontSize: "xx-small", color: "gray" }}
+                  >
+                    ℹ️ Hover for USD
+                  </span>
                 </>
               )}
             </span>
