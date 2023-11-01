@@ -94,7 +94,7 @@ function HomeBanner(args) {
 
   return (
     <div className="row mt-4 banner-wrap">
-      <div className="col-12 col-md-8 col-lg-9">
+      <div className="col-12 col-md-8 col-lg-12">
         <div className="main-banner">
           <Carousel
             activeIndex={activeIndex}
@@ -123,7 +123,7 @@ function HomeBanner(args) {
           </Carousel>
         </div>
       </div>
-      <div className="col-12 col-md-4 col-lg-3">
+      {/* <div className="col-12 col-md-4 col-lg-3">
         <div className="banner-product">
           <span className="me-2">
             <img src={b1} alt="Product" />
@@ -180,7 +180,7 @@ function HomeBanner(args) {
             </a>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

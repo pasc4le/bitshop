@@ -177,7 +177,7 @@ function ProductPage() {
   //   { sort: true }
   // );
 
-  const nPosts = 100;
+  const nPosts = 200;
   console.log(`Fetching last ${nPosts} 300180-kind posts  from nostr relays`);
 
   // TODO: fix it; was just for demo!
@@ -487,7 +487,7 @@ function ProductPage() {
 
       <div className="category-wrap">
         <h4>
-          Smart Phones & Tablets <span>(Total Product {nPosts})</span>
+          Smart Phones & Tablets <span>(Total Product {products.length})</span>
         </h4>
 
         <div className="filter-wrap mt-4">

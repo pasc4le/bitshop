@@ -25,7 +25,7 @@ function App() {
   return (
     <>
       {showHeaderFooter ? <Header /> : ""}
-      {showHeaderFooter ? <Menu /> : ""}
+      {/* {showHeaderFooter ? <Menu /> : ""} */}
       <Router>
         <Routes>
           <Route exact path="/details" element={<Details />} />

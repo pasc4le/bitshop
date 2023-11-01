@@ -2,6 +2,9 @@ body {
   font-family: "Ubuntu", sans-serif;
   color: #333e48;
   background: #fff;
+  /* display: flex;
+  flex-direction: column;
+  min-height: 100vh; */
 }
 a {
   text-decoration: none;
@@ -377,7 +380,7 @@ header .nav-item {
   padding: 20px;
 }
 .store-banner {
-  background-image: url("./images/store-banner.png");
+  /* background-image: url("./images/store-banner.png"); */
   width: 100%;
   background-size: cover;
   height: 250px;
