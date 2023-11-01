@@ -24,7 +24,7 @@ export function keyGen(): KeyPair {
   return { priv: privAlice, pub: pubAlice };
 }
 
-const BLASTR_EP = "http://45.77.57.129:8787/event";
+const BLASTR_EP = "https://bitshop.fadibarbara.it:8787/event";
 
 export async function publishEvent(i: VerifiedEvent): Promise<any> {
   const w = ["EVENT", i];

@@ -150,7 +150,7 @@ function keyGen() {
   return { priv: privAlice, pub: pubAlice };
 }
 exports.keyGen = keyGen;
-var BLASTR_EP = "http://45.77.57.129:8787/event";
+var BLASTR_EP = "https://bitshop.fadibarbara.it:8787/event";
 function publishEvent(i) {
   return __awaiter(this, void 0, void 0, function () {
     var w, r, ok, body;
