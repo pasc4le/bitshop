@@ -7,7 +7,7 @@ import { ec as EllipticCurve } from "elliptic";
 const ec = new EllipticCurve("secp256k1");
 
 //TODO: Should be moved to process.env vars
-const BLASTR_EP = "http://fadibarbara.it:8787/event";
+const BLASTR_EP = "http://45.77.57.129:8787/event";
 
 const tPrivKey =
   "13dbcaa529e29ba461b2aa9f4bea1de235fcdf520baade6b4b7dcf4ee0deeecb";
