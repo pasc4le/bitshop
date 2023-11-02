@@ -747,6 +747,7 @@ function OrderSummary(props: {
   const [grandTotal, setGrandTotal] = useState();
 
   const stallId = props.cartProducts[0].stall_id;
+  const productId = props.cartProducts[0].product_id;
 
   // useEffect(() => {
   //   console.log("Effect is running");
@@ -826,8 +827,9 @@ function OrderSummary(props: {
         );
         // return itemPrice * qty;
       }, 0);
-      console.log("grandTotal is:" + grandTotal);
+      console.log("grandTotal is (in order summary):" + grandTotal);
       setGrandTotal(grandTotal);
+      localStorage.setItem(productId, grandTotal.toString());
     }
   }, [stall]);
 
@@ -851,7 +853,12 @@ function OrderSummary(props: {
         const btcToUsdRate = parseFloat(response.data.rates.usd.value);
         console.log(`the btc to usd rate is: ${btcToUsdRate}`);
         console.log(`the grand total is: ${grandTotal}`);
+        if (!grandTotal) {
+          var grandTotal = parseFloat(localStorage.getItem(productId));
+        }
+
         const usdToBtcAmount = grandTotal / btcToUsdRate;
+
         setBtcAmount(usdToBtcAmount);
         localStorage.setItem(
           "btcAmount in order summary component",
