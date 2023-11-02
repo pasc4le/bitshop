@@ -358,11 +358,16 @@ function Checkout(props: {
   //   }, []); // Other logic
 
   //   const btcAmount = grandTotal / 26836.345;
-  const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
+
+  const btcAmount = parseFloat(
+    localStorage.getItem(cartProducts[0].product_id) || "0"
+  );
   // const btcAmount = 1000;
   const zapBitshop = async () => {
     try {
       const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
+      console.log("the btcAmount inside zap bitshop is", btcAmount);
+      // console.log(prodcartProducts[0].product_id);
       //   await webln.enable();
       const fees = 0.05;
       const sats = btcAmount !== null ? btcAmount * fees * 10 ** 8 : null;
@@ -377,6 +382,7 @@ function Checkout(props: {
       try {
         await window.webln.enable();
         const result = await window.webln.sendPayment(invoice.payment_request);
+
         console.dir(result);
       } catch (error) {
         alert("An error occurred during the payment.");
@@ -829,6 +835,10 @@ function OrderSummary(props: {
       }, 0);
       console.log("grandTotal is (in order summary):" + grandTotal);
       setGrandTotal(grandTotal);
+      if (localStorage.getItem(productId)) {
+        localStorage.removeItem(productId);
+      }
+
       localStorage.setItem(productId, grandTotal.toString());
     }
   }, [stall]);
@@ -860,10 +870,7 @@ function OrderSummary(props: {
         const usdToBtcAmount = grandTotal / btcToUsdRate;
 
         setBtcAmount(usdToBtcAmount);
-        localStorage.setItem(
-          "btcAmount in order summary component",
-          usdToBtcAmount
-        );
+        localStorage.setItem("btcAmount", usdToBtcAmount);
         // localStorage.setItem("reloaded", 1);
 
         // window.location.reload();
