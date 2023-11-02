@@ -397,7 +397,7 @@ function Checkout(props: {
     try {
       const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
       // const sats = btcAmount !== null ? btcAmount : null;
-      const sats = btcAmount !== null ? btcAmount * 0.95 * 10 ** 8 : null;
+      const sats = btcAmount !== null ? btcAmount * 10 ** 8 : null;
       // const sats = 1000;
 
       const invoice = await makeInvoiceMerchant(sats, "payment merchant");
