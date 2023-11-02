@@ -20,6 +20,8 @@ import {
   groupShippinZones,
 } from "./lib/nip15";
 import { eventKind, NostrFetcher } from "nostr-fetch";
+import { BLASTR_EP, EVENT_KINDS } from "./constants";
+
 // import { each } from "jquery";
 
 function ProductPage() {
@@ -178,7 +180,7 @@ function ProductPage() {
   // );
 
   const nPosts = 200;
-  console.log(`Fetching last ${nPosts} 300180-kind posts  from nostr relays`);
+  console.log(`Fetching last ${nPosts} ${EVENT_KINDS.PUBLISH_PRODUCT}-kind posts  from nostr relays`);
 
   // TODO: fix it; was just for demo!
   // localStorage.setItem("bitshop-cart", "{}");
@@ -208,7 +210,7 @@ function ProductPage() {
     const productsRaw: NostrEvent[] =  await fetcher.fetchLatestEvents(
       relayUrls,
       /* filter */
-      { kinds: [300180] },
+      { kinds: [EVENT_KINDS.PUBLISH_PRODUCT] },
       /* number of events to fetch */
       nPosts
     );

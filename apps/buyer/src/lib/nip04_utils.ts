@@ -7,6 +7,7 @@ import {
   validateEvent,
 } from "nostr-tools";
 import { ec as EllipticCurve } from "elliptic";
+import { BLASTR_EP } from "./constants";
 
 // Define key-pair interface
 export interface KeyPair {
@@ -24,7 +25,7 @@ export function keyGen(): KeyPair {
   return { priv: privAlice, pub: pubAlice };
 }
 
-const BLASTR_EP = "https://bitshop.fadibarbara.it/event";
+// const BLASTR_EP = "https://bitshop.fadibarbara.it/event";
 
 export async function publishEvent(i: VerifiedEvent): Promise<any> {
   const w = ["EVENT", i];

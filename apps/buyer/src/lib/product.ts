@@ -3,21 +3,14 @@ import * as Nostr from "nostr-tools";
 import { v4 } from "uuid";
 import { keyGen, KeyPair } from "./nip04_utils";
 import { ec as EllipticCurve } from "elliptic";
+import { BLASTR_EP, EVENT_KINDS } from "./constants";
 
 const ec = new EllipticCurve("secp256k1");
-
-//TODO: Should be moved to process.env vars
-const BLASTR_EP = "https://bitshop.fadibarbara.it/event";
 
 const tPrivKey =
   "13dbcaa529e29ba461b2aa9f4bea1de235fcdf520baade6b4b7dcf4ee0deeecb";
 const tPubKey =
   "6f141e5b8607932c1930760dd2fd7ab7ea3dc829844ce72faa408db1334105ad";
-
-const EVENT_KINDS = {
-  PUBLISH_STALL: 300170, // 30017 is the real event kind
-  PUBLISH_PRODUCT: 300180, // 30018 is the real event kind
-};
 
 // Defining type for formData for submitProduct function
 interface ProductFormData {
