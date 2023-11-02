@@ -42,6 +42,7 @@ import Store from "./component/store/index";
 import HomeBanner from "./component/banner/HomeBanner";
 import TopCategory from "./component/TopCategories/index";
 import TrustedShop from "./component/TrustedShop/index";
+import EmailSignUp from "./EmailSignup";
 
 // products
 // const products = [
@@ -622,7 +623,8 @@ function Main() {
               <p className="mb-0">...and unlock more B2E benefits!</p>
             </div>
             <div className="col-12 col-md-6">
-              <div className="input-group">
+              <EmailSignUp />
+              {/* <div className="input-group">
                 <input
                   type="text"
                   className="form-control"
@@ -633,7 +635,7 @@ function Main() {
                 <span className="input-group-text" id="basic-addon2">
                   Sign up
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

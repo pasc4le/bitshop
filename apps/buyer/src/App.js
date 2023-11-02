@@ -18,11 +18,13 @@ import DecryptMnemonic from "./decryptMnemonic";
 import RedirectToForm from "./form";
 import ProductInsert from "./insert_product";
 import Product from "./product";
+import { EmailProvider } from "./EmailContext";
+import EmailListPage from "./mailDisplay";
 
 function App() {
-  const [showHeaderFooter, setShowHeaderFooter] = useState(true);
-  useEffect(() => {}, [showHeaderFooter]);
-  return (
+  <EmailProvider>
+    const [showHeaderFooter, setShowHeaderFooter] = useState(true); useEffect(()
+    => {}, [showHeaderFooter]); return (
     <>
       {showHeaderFooter ? <Header /> : ""}
       {/* {showHeaderFooter ? <Menu /> : ""} */}
@@ -38,6 +40,7 @@ function App() {
           <Route exact path="/getMnemonic" element={<DecryptMnemonic />} />
           <Route exact path="/form" element={<RedirectToForm />} />
           <Route exact path="/new" element={<ProductInsert />} />
+          <Route exact path="/xxx" element={<EmailListPage />} />
 
           <Route
             exact
@@ -61,7 +64,8 @@ function App() {
       </Router>
       {showHeaderFooter ? <Footer /> : ""}
     </>
-  );
+    );
+  </EmailProvider>;
 }
 
 export default App;
