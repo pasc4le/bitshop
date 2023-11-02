@@ -119,23 +119,20 @@ export default function Stall(props) {
                         <div className='card store-details'>
                             <div className='block'>
                                 <h5><span><i className="fa fa-globe" aria-hidden="true"></i></span> About</h5>
-                                <p>B-Premio is a your perfect destination for all your Apple products & services.
-                                    We are specialised in simplify their product and service.B-Premio is your premier
-                                    destination for all Apple electronic needs. We are the most renowned Apple
-                                    Authorized Reseller </p>
+                                <p> </p>
                             </div>
 
                             <div className='mt-4'>
                                 <h5><span><i className="uil uil-award"></i></span> Badges</h5>
                                 <div className='mt-2'>
-                                    <img src={bigBadge1} alt="badge" className='me-1' />
+                                    {/* <img src={bigBadge1} alt="badge" className='me-1' />
                                     <img src={bigBadge2} alt="badge" className='me-1' />
-                                    <img src={bigBadge3} alt="badge" className='me-1' />
+                                    <img src={bigBadge3} alt="badge" className='me-1' /> */}
                                 </div>
                             </div>
                             <div className='mt-3 mt-2 store-contact'>
                                 <p className='mb-0'><span className='me-2'><i className="fa fa-map-marker" aria-hidden="true"></i></span>
-                                    27 Maracoir Street, Mannady San Francisco, California, United States (US)</p>
+                                    {/* 27 Maracoir Street, Mannady San Francisco, California, United States (US)</p> */}
                             </div>
                             <div className='mt-2 store-contact'>
                                 <p className='mt-3 mb-0'><span className='me-2'><i className="fa fa-phone" aria-hidden="true"></i></span>

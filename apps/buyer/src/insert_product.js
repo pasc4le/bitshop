@@ -278,6 +278,7 @@ const ProductInsert = () => {
             Price:
             <input
               type="number"
+              step="any"
               onChange={(e) => handleInputChange(e, "price")}
             />
           </label>
