@@ -94,7 +94,7 @@ function HomeBanner(args) {
 
   return (
     <div className="row mt-4 banner-wrap">
-      <div className="col-12 col-md-8 col-lg-12">
+      <div className="col-12 col-md-8 col-lg-9">
         <div className="main-banner">
           <Carousel
             activeIndex={activeIndex}
@@ -123,7 +123,7 @@ function HomeBanner(args) {
           </Carousel>
         </div>
       </div>
-      {/* <div className="col-12 col-md-4 col-lg-3">
+      <div className="col-12 col-md-4 col-lg-3">
         <div className="banner-product">
           <span className="me-2">
             <img src={b1} alt="Product" />
@@ -132,7 +132,7 @@ function HomeBanner(args) {
             <p className="mb-0">
               CATCH BIG <strong>DEALS</strong> ON THE CAMERAS
             </p>
-            <a href="#">
+            <a href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub">
               <strong>
                 Shop now{" "}
                 <span className="bg-round bg-theme ms-2">
@@ -151,7 +151,7 @@ function HomeBanner(args) {
             <p className="mb-0">
               SHOP THE <strong>HOTTEST</strong> PRODUCTS
             </p>
-            <a href="#">
+            <a href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub">
               <strong>
                 Shop now{" "}
                 <span className="bg-round bg-theme ms-2">
@@ -170,7 +170,10 @@ function HomeBanner(args) {
             <p className="mb-0">
               TABLETS, SMARTPHONES <strong>AND MORE</strong>
             </p>
-            <a href="#" className="mt-1 d-flex align-items-center">
+            <a
+              href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub"
+              className="mt-1 d-flex align-items-center"
+            >
               UP
               <br />
               TO<h6 className="d-inline-block ms-2">70% </h6>{" "}
@@ -180,7 +183,7 @@ function HomeBanner(args) {
             </a>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }

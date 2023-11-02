@@ -6,6 +6,7 @@ import product4 from "./images/p4.png";
 import product5 from "./images/p5.png";
 import electrohub from "./images/electrohub.png";
 import babyEssential from "./images/baby_essential.png";
+import ragServices from "./images/rag_services.png";
 import badge1 from "./images/badges/badge1.png";
 import badge2 from "./images/badges/badge2.png";
 import p10 from "./images/products/p10.png";
@@ -172,6 +173,11 @@ if (products.length) {
   shopSpecificProducts = shopSpecificProduct;
 }
 
+// const RAGServices: {
+//   priv: "9d9c5330b29b0e5c3b13cc58efd7d75e7adb311c2a2d0042ac09c8e74e7429d1",
+//   pub: "f6649d009e97aab43fa2a03f1eea170829553a273be5e603a87bef4510d1300e"
+// }
+
 // const baby_essential: {
 //   priv: "3a3ff0e15cb0bb742b18d1ab89682e30179fadff52201d975e213731762a06e0",
 //   pub: "3bd47c63fe5feea1b087b605b86ac2aeae3b8dd1d49a0a65a790d1d3ba82e8d1"
@@ -198,6 +204,14 @@ const stores = [
     isFeatured: "Yes",
     ratings: 4,
     pubKey: "3bd47c63fe5feea1b087b605b86ac2aeae3b8dd1d49a0a65a790d1d3ba82e8d1",
+  },
+  {
+    title: "RAG Services",
+    categoryName: "Services",
+    imgSrc: ragServices,
+    isFeatured: "Yes",
+    ratings: 4,
+    pubKey: "f6649d009e97aab43fa2a03f1eea170829553a273be5e603a87bef4510d1300e",
   },
   // {
   //   title: "Mobile world",
@@ -413,41 +427,40 @@ function Main() {
         {/* banner starts */}
         <HomeBanner />
         {/* banner ends */}
-
         {/* nav tab starts */}
-        {/* <Tabs
+        <Tabs
           id="controlled-tab-example"
           activeKey={key}
           onSelect={(k) => setKey(k)}
           className="mt-4 mb-4 nav-wrap"
         >
-          <Tab eventKey="partnersShop" title="Partners shop">*/}
-        <div className="product-wrap">
-          <div className="container-fluid">
-            <OwlCarousel
-              items={5}
-              className="owl-theme"
-              loop={false}
-              nav={false}
-              dots={true}
-              autoplay={false}
-              margin={8}
-              {...nav_options}
-            >
-              {stores.map((store) => {
-                return (
-                  <div>
-                    <a href="store?id=c6dc098f6c5159efbff9de794cf590a1c063ea8cd199268e3c424bde96f16de6">
-                      <Store store={store} />
-                    </a>
-                  </div>
-                );
-              })}
-            </OwlCarousel>
-          </div>
-        </div>
-        {/* </Tab>
-          <Tab eventKey="mostTrusted" title="Most trusted">
+          <Tab eventKey="partnersShop" title="Partners shop">
+            <div className="product-wrap">
+              <div className="container-fluid">
+                <OwlCarousel
+                  items={5}
+                  className="owl-theme"
+                  loop={false}
+                  nav={false}
+                  dots={true}
+                  autoplay={false}
+                  margin={8}
+                  {...nav_options}
+                >
+                  {stores.map((store) => {
+                    return (
+                      <div>
+                        <a href="store?id=c6dc098f6c5159efbff9de794cf590a1c063ea8cd199268e3c424bde96f16de6">
+                          <Store store={store} />
+                        </a>
+                      </div>
+                    );
+                  })}
+                </OwlCarousel>
+              </div>
+            </div>
+          </Tab>
+          {/*  <Tab eventKey="mostTrusted" title="Most trusted">
             <div className="product-wrap">
               <div className="container-fluid">
                 <OwlCarousel
@@ -494,26 +507,27 @@ function Main() {
                 </OwlCarousel>
               </div>
             </div>
-          </Tab>
-        </Tabs> */}
+          </Tab>*/}
+        </Tabs>
         {/* nav tab ends */}
-
-        {/* feature section starts
+        {/* feature section starts */}
         <div className="feature-section mt-4">
           <h4 className="d-inline-block me-3 mb-0">
             SHOP AND <strong>SAVE BIG</strong> ON HOTTEST TABLETS
           </h4>
-          <button className="btn btn-theme feature-btn">
+          <button
+            className="btn btn-theme feature-btn"
+            onClick={() =>
+              (window.location.href =
+                "/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub")
+            }
+          >
             Start Buying
-            <br />
-            <span className="btn-text">
-              <sup>₿</sup>74<sup>99</sup>
-            </span>
           </button>
-        </div>{" "}  */}
+        </div>{" "}
       </div>
       {/* Deals section starts */}
-      {/* <div className="limited-product mt-5">
+      <div className="limited-product mt-5">
         <div className="container">
           <div className="row">
             <div className="col-12 col-md-3">
@@ -556,10 +570,10 @@ function Main() {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       {/* Deals section ends */}
       {/* newsletter starts */}
-      {/* <div className="mt-5 newsletter-wrap">
+      <div className="mt-5 newsletter-wrap">
         <div className="container">
           <div className="row align-items-center">
             <div className="col-12 col-md-3">
@@ -586,7 +600,7 @@ function Main() {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       {/* newsletter ends */}
       <div className="container">
         {/* shop starts */}

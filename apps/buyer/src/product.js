@@ -20,7 +20,7 @@ import {
   groupShippinZones,
 } from "./lib/nip15";
 import { eventKind, NostrFetcher } from "nostr-fetch";
-import { BLASTR_EP, EVENT_KINDS } from "./constants";
+import { BLASTR_EP, EVENT_KINDS } from "./lib/constants";
 
 // import { each } from "jquery";
 
