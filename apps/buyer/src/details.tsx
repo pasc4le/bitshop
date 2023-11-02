@@ -252,7 +252,7 @@ function DetailsInner(props: { product: ProductEvent }) {
           {/* <h4>Smartphone 6S 32GB LTE</h4> */}
           <h4>{props.product.content.name}</h4>
           <span>
-            <img src={compnyLogo} alt="Company Logo" />
+            {/* <img src={compnyLogo} alt="Company Logo" /> */}
             <a href={href} style={{ marginLeft: "0.5em" }}>
               <strong>{getMerchantNameByPubkey(props.product.pubkey)}</strong>
             </a>

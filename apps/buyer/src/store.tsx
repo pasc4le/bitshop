@@ -16,10 +16,20 @@ import {
 } from "./lib/nip15";
 
 function StallCard(props: { stall: StallEvent }) {
+  const [params, _] = useSearchParams();
+  console.log(params);
+  const _img = params.get("img");
+  const _title = params.get("title");
+  const _description = params.get("description");
+
+  const img = _img as string;
+  const title = _title as string;
+  const description = _description as string;
+
   const name = props.stall.content.name;
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
-  const href = `/stall?id=${props.stall.content.id}`;
+  const href = `/stall?id=${props.stall.content.id}&img=${img}&title=${title}&name=${name}`;
 
   useEffect(() => {
     getCategoryForStall({

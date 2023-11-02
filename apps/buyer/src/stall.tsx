@@ -56,11 +56,20 @@ export default function Stall(props) {
   const [searchParams, _] = useSearchParams();
   const _id = searchParams.get("id");
 
+  const _img = searchParams.get("img");
+  const _title = searchParams.get("title");
+  const _name = searchParams.get("name");
+  const _description = searchParams.get("description");
+
   if (_id === null) {
     redirect("/404");
   }
 
   const id = _id as string;
+  const img = _img as string;
+  const title = _title as string;
+  const name = _name as string;
+  const description = _description as string;
 
   const [products, setProducts] = useState<ProductEvent[]>([]);
 
@@ -96,20 +105,18 @@ export default function Stall(props) {
       <div className="store-banner-wrap">
         <div className="store-banner">
           <div className="text-center banner-text">
-            <h2>Your one stop shop for all apple products.</h2>
-            <a href="#">Shop Now</a>
+            <h1>{title}</h1>
+            <h3>{name}</h3>
           </div>
         </div>
         <div className="store-name text-center">
           <span className="store-logo">
-            <img src={compnyLogo} alt="Company Logo" width="40%" />
+            <img src={"." + img} alt="Company Logo" width="40%" />
           </span>
           <h6>
             <span>
-              <img src={compnyLogo} alt="Company Logo" />
-              <span className="ms-2">
-                <strong>B-Premio</strong>
-              </span>
+              {/* <img src={compnyLogo} alt="Company Logo" /> */}
+              <span className="ms-2">{/* <strong>B-Premio</strong> */}</span>
             </span>
           </h6>
         </div>
@@ -126,7 +133,7 @@ export default function Stall(props) {
                   </span>{" "}
                   About
                 </h5>
-                <p> </p>
+                <p>{description || title + " has no description yet"}</p>
               </div>
 
               <div className="mt-4">
@@ -155,7 +162,7 @@ export default function Stall(props) {
                   <span className="me-2">
                     <i className="fa fa-phone" aria-hidden="true"></i>
                   </span>
-                  1800123123
+                  {/* 1800123123 */}
                 </p>
               </div>
               <div className="mt-2 store-contact">
@@ -163,7 +170,7 @@ export default function Stall(props) {
                   <span className="me-2">
                     <i className="uil uil-store"></i>
                   </span>
-                  Store Closed
+                  {/* Store Closed */}
                 </p>
               </div>
             </div>
@@ -181,7 +188,7 @@ export default function Stall(props) {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Search all Samsung Brand stc"
+                    placeholder={"Search " + name}
                     aria-label=""
                     aria-describedby="basic-addon1"
                   />
