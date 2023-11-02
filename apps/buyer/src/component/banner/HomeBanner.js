@@ -63,7 +63,7 @@ function HomeBanner(args) {
       >
         <div className="row justify-content-center align-items-center">
           <div className="col-12 col-md-6">
-            <h1>Bitshop. The Marketplace for All</h1>
+            <h1>Bitshop. The Independent Marketplace for All</h1>
             <p>
               <strong>Sell, Build, Earn</strong>
             </p>

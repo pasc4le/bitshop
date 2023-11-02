@@ -43,6 +43,7 @@ import HomeBanner from "./component/banner/HomeBanner";
 import TopCategory from "./component/TopCategories/index";
 import TrustedShop from "./component/TrustedShop/index";
 import EmailSignUp from "./EmailSignup";
+import { EmailContext } from "./EmailContext";
 
 // products
 // const products = [
