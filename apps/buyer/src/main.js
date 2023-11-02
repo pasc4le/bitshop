@@ -7,6 +7,10 @@ import product5 from "./images/p5.png";
 import electrohub from "./images/electrohub.png";
 import babyEssential from "./images/baby_essential.png";
 import ragServices from "./images/rag_services.png";
+import asus from "./images/asus.jpg";
+import consult from "./images/consult.jpeg";
+import pen from "./images/pen.jpeg";
+import carrot from "./images/carrot.jpeg";
 import badge1 from "./images/badges/badge1.png";
 import badge2 from "./images/badges/badge2.png";
 import p10 from "./images/products/p10.png";
@@ -154,7 +158,40 @@ import TrustedShop from "./component/TrustedShop/index";
 //     ratings: 4,
 //   },
 // ];
-const products = [];
+const products = [
+  {
+    id: "dab34703-8924-4f26-bdac-3a7f683bb4a3",
+    title: "Asus ZenPad 8",
+    categoryName: "Tablet",
+    imgSrc: asus,
+    isFeatured: "Yes",
+    ratings: 4,
+  },
+  {
+    id: "76aa3355-fbe1-48dc-9273-65056a6f09de",
+    title: "Tax consultancy",
+    categoryName: "Services",
+    imgSrc: consult,
+    isFeatured: "Yes",
+    ratings: 4,
+  },
+  {
+    id: "010e9c30-b521-4874-9ce7-98a4b825ec6c",
+    title: "FAKE Pen",
+    categoryName: "Donations",
+    imgSrc: pen,
+    isFeatured: "Yes",
+    ratings: 4,
+  },
+  {
+    id: "8836105e-9cfe-46c9-a09f-65287eb7496c",
+    title: "FAKE Carrot",
+    categoryName: "Donations",
+    imgSrc: carrot,
+    isFeatured: "Yes",
+    ratings: 4,
+  },
+];
 let shopSpecificProducts = [];
 if (products.length) {
   let arrIndex = 0;
