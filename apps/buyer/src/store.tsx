@@ -91,13 +91,18 @@ export default function Store(props) {
   console.log(id);
 
   const [stalls, setStalls] = useState<StallEvent[]>([]);
+  //   var stallsArray = [];
   const onNew = (ns: StallEvent) => {
-    if (stalls.map((ss) => ss.id).includes(ns.id)) {
-      return;
-    }
-
-    setStalls((old) => {
-      return [...old, ns];
+    setStalls((oldStalls) => {
+      // Check if the new stall's id is already present in the current state
+      const isPresent = oldStalls.some((ss) => ss.id === ns.id);
+      if (!isPresent) {
+        // If it's not present, add the new stall to the state
+        return [...oldStalls, ns];
+      } else {
+        // If it's already present, return the state as is
+        return oldStalls;
+      }
     });
   };
 
