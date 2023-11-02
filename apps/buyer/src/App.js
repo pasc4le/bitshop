@@ -22,50 +22,53 @@ import { EmailProvider } from "./EmailContext";
 import EmailListPage from "./mailDisplay";
 
 function App() {
-  <EmailProvider>
-    const [showHeaderFooter, setShowHeaderFooter] = useState(true); useEffect(()
-    => {}, [showHeaderFooter]); return (
+  const [showHeaderFooter, setShowHeaderFooter] = useState(true);
+  useEffect(() => {}, [showHeaderFooter]);
+
+  return (
     <>
       {showHeaderFooter ? <Header /> : ""}
       {/* {showHeaderFooter ? <Menu /> : ""} */}
       <Router>
-        <Routes>
-          <Route exact path="/details" element={<Details />} />
-          <Route exact path="/store" element={<Store />} />
-          <Route exact path="/stall" element={<Stall />} />
-          <Route exact path="/" element={<Main />} />
-          <Route exact path="/cart" element={<Cart />} />
-          <Route exact path="/checkout" element={<Checkout />} />
-          <Route exact path="/orders" element={<Orders />} />
-          <Route exact path="/getMnemonic" element={<DecryptMnemonic />} />
-          <Route exact path="/form" element={<RedirectToForm />} />
-          <Route exact path="/new" element={<ProductInsert />} />
-          <Route exact path="/xxx" element={<EmailListPage />} />
+        <EmailProvider>
+          <Routes>
+            <Route exact path="/details" element={<Details />} />
+            <Route exact path="/store" element={<Store />} />
+            <Route exact path="/stall" element={<Stall />} />
+            <Route exact path="/" element={<Main />} />
+            <Route exact path="/cart" element={<Cart />} />
+            <Route exact path="/checkout" element={<Checkout />} />
+            <Route exact path="/orders" element={<Orders />} />
+            <Route exact path="/getMnemonic" element={<DecryptMnemonic />} />
+            <Route exact path="/form" element={<RedirectToForm />} />
+            <Route exact path="/new" element={<ProductInsert />} />
+            <Route exact path="/xxx" element={<EmailListPage />} />
 
-          <Route
-            exact
-            path="/login"
-            element={
-              <Login headerFooterHandler={() => setShowHeaderFooter(false)} />
-            }
-          />
-          <Route
-            exact
-            path="/register"
-            element={
-              <Register
-                headerFooterHandler={() => setShowHeaderFooter(false)}
-              />
-            }
-          />
-          <Route path="*" element={<NoMatch />} />
-          <Route exact path="/products" element={<Product />} />
-        </Routes>
+            <Route
+              exact
+              path="/login"
+              element={
+                <Login headerFooterHandler={() => setShowHeaderFooter(false)} />
+              }
+            />
+            <Route
+              exact
+              path="/register"
+              element={
+                <Register
+                  headerFooterHandler={() => setShowHeaderFooter(false)}
+                />
+              }
+            />
+            <Route path="*" element={<NoMatch />} />
+            <Route exact path="/products" element={<Product />} />
+          </Routes>
+        </EmailProvider>
+        ;
       </Router>
       {showHeaderFooter ? <Footer /> : ""}
     </>
-    );
-  </EmailProvider>;
+  );
 }
 
 export default App;
