@@ -834,9 +834,20 @@ function OrderSummary(props: {
   useEffect(() => {
     const convertUsdToBtc = async () => {
       try {
+        // const response = await axios.get(
+        //   "https://api.coingecko.com/api/v3/exchange_rates"
+        // );
+
         const response = await axios.get(
-          "https://api.coingecko.com/api/v3/exchange_rates"
+          "https://api.coingecko.com/api/v3/exchange_rates",
+          {
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          }
         );
+
         const btcToUsdRate = parseFloat(response.data.rates.usd.value);
         console.log(`the btc to usd rate is: ${btcToUsdRate}`);
         console.log(`the grand total is: ${grandTotal}`);
