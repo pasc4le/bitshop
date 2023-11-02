@@ -75,7 +75,10 @@ function HomeBanner(args) {
             </h5>
             <button
               className="btn btn-theme mt-3 mb-4"
-              onClick={() => (window.location.href = "/products")}
+              onClick={() =>
+                (window.location.href =
+                  "/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub")
+              }
             >
               Start Shopping
             </button>
