@@ -233,6 +233,7 @@ function Checkout(props: {
   const [productEvents, setProductEvents] = useState<null | ProductEvent[]>();
   const [isFirstSuccessful, setIsFirstSuccessful] = useState(false);
   const [isSecondSuccessful, setIsSecondSuccessful] = useState(false);
+  const [linkProduct, setLinkProduct] = useState("");
   const [showBanner, setShowBanner] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -312,6 +313,14 @@ function Checkout(props: {
 
     Promise.all(pp).then((pes) => {
       setProductEvents(pes);
+      const specs = pes[0].content.specs;
+      if (specs) {
+        for (let i = 0; i < specs.length; i++) {
+          if (specs[i][0] === "link" || specs[i][0] === "Link") {
+            setLinkProduct(specs[i][1]);
+          }
+        }
+      }
     });
   }, [_s]);
 
@@ -607,6 +616,13 @@ function Checkout(props: {
                   {isSecondSuccessful && (
                     <div style={bannerStyle}>
                       <h1 style={bannerTextStyle}>Payment Successful!</h1>
+                      {linkProduct && (
+                        <h2>
+                          The link for the product is at
+                          <br />
+                          <a href={linkProduct}>{linkProduct}</a>
+                        </h2>
+                      )}
                     </div>
                   )}
                 </div>

@@ -409,12 +409,14 @@ function DetailsInner(props: { product: ProductEvent }) {
                     <tbody>
                       {props.product.content.specs?.map((e) => {
                         const [key, value] = [...e];
-                        return (
-                          <tr>
-                            <td>{key}</td>
-                            <td>{value}</td>
-                          </tr>
-                        );
+                        if (key !== "link" && key !== "Link") {
+                          return (
+                            <tr>
+                              <td>{key}</td>
+                              <td>{value}</td>
+                            </tr>
+                          );
+                        }
                       })}
                       {/*
                                 <tr>
