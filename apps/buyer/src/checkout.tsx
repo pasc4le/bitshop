@@ -842,7 +842,10 @@ function OrderSummary(props: {
         console.log(`the grand total is: ${grandTotal}`);
         const usdToBtcAmount = grandTotal / btcToUsdRate;
         setBtcAmount(usdToBtcAmount);
-        localStorage.setItem("btcAmount", usdToBtcAmount);
+        localStorage.setItem(
+          "btcAmount in order summary component",
+          usdToBtcAmount
+        );
         // localStorage.setItem("reloaded", 1);
 
         // window.location.reload();
@@ -876,7 +879,9 @@ function OrderSummary(props: {
             <span title={`Total: ${grandTotal} USD`}>
               {btcAmount !== null && !isNaN(btcAmount) ? (
                 <>
-                  {console.log(`BTC amount: ${btcAmount.toFixed(8)}`)}
+                  {console.log(
+                    `BTC amount in order summary: ${btcAmount.toFixed(8)}`
+                  )}
                   {btcAmount.toFixed(8)} BTC{" "}
                   <span
                     className="hover-instruction"
