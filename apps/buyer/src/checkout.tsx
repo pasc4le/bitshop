@@ -60,9 +60,9 @@ import {
 // };
 
 const makeInvoiceBitshop = async (amount, memo) => {
-  if (!process.env.REACT_APP_LNBITS_DEMO_KEY) return;
+  if (!process.env.REACT_APP_LNBITS_DEMO_KEY || !process.env.REACT_APP_LNBITS_API_URL) return;
 
-  const url = "https://legend.lnbits.com/api/v1/payments";
+  const url = `${process.env.REACT_APP_LNBITS_API_URL}/api/v1/payments`;
   const data = {
     out: false,
     amount: amount,
@@ -84,14 +84,16 @@ const makeInvoiceBitshop = async (amount, memo) => {
 };
 
 const makeInvoiceMerchant = async (amount, memo) => {
-  const url = "https://legend.lnbits.com/api/v1/payments";
+  if (!process.env.REACT_APP_LNBITS_DEMO_SELLER_KEY || !process.env.REACT_APP_LNBITS_API_URL) return;
+
+  const url = `${process.env.REACT_APP_LNBITS_API_URL}/api/v1/payments`;
   const data = {
     out: false,
     amount: amount,
     memo: memo,
   };
   const headers = {
-    "X-Api-Key": "e6e00856789c4824be8410d2a99b64a0",
+    "X-Api-Key": process.env.REACT_APP_LNBITS_DEMO_SELLER_KEY,
     "Content-type": "application/json",
   };
 
