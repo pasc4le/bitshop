@@ -60,6 +60,8 @@ import {
 // };
 
 const makeInvoiceBitshop = async (amount, memo) => {
+  if (!process.env.REACT_APP_LNBITS_DEMO_KEY) return;
+
   const url = "https://legend.lnbits.com/api/v1/payments";
   const data = {
     out: false,
@@ -67,7 +69,7 @@ const makeInvoiceBitshop = async (amount, memo) => {
     memo: memo,
   };
   const headers = {
-    "X-Api-Key": "835ae4f912d8469ea36262b453407045",
+    "X-Api-Key": process.env.REACT_APP_LNBITS_DEMO_KEY,
     "Content-type": "application/json",
   };
 
