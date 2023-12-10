@@ -18,6 +18,9 @@ import {
   getProductById,
   getStallById,
 } from "./lib/nip15";
+
+const BITSHOP_FEES = 0.05;
+
 // import { join } from "path";
 
 // const convertUsdToBtc = async (value) => {
@@ -373,7 +376,7 @@ function Checkout(props: {
       console.log("the btcAmount inside zap bitshop is", btcAmount);
       // console.log(prodcartProducts[0].product_id);
       //   await webln.enable();
-      const fees = 0.05;
+      const fees = BITSHOP_FEES;
       const sats = btcAmount !== null ? btcAmount * fees * 10 ** 8 : null;
       // const sats = btcAmount !== null ? btcAmount * fees : null;
       const invoice = await makeInvoiceBitshop(sats, "fees to bitshop");
@@ -401,7 +404,7 @@ function Checkout(props: {
     try {
       const btcAmount = parseFloat(localStorage.getItem("btcAmount") || "0");
       // const sats = btcAmount !== null ? btcAmount : null;
-      const sats = btcAmount !== null ? btcAmount * 10 ** 8 : null;
+      const sats = btcAmount !== null ? btcAmount * 10 ** 8 * (1 - BITSHOP_FEES) : null;
       // const sats = 1000;
 
       const invoice = await makeInvoiceMerchant(sats, "payment merchant");
@@ -723,7 +726,7 @@ function ProductDetail(props: {
       <div className="cart-total-dil">
         <h4>{props.event.content.name}</h4>
         <span title={`Total: ${price} USD x ${qty}`}>
-          {(price / btcAmount).toFixed(8)} BTC x {qty}
+          {(price * (1 - BITSHOP_FEES)/ btcAmount).toFixed(8)} BTC x {qty}
         </span>
       </div>
       <div className="cart-total-dil pt-1">
@@ -738,6 +741,12 @@ function ProductDetail(props: {
               ).toFixed(8)} BTC`
             : // ? `${itemShippingCost}$ x ${qty} + ${stallShippingCost}`
               "FREE"}
+        </span>
+      </div>
+      <div className="cart-total-dil pt-1">
+        <h4>Fees</h4>
+        <span>
+          {(price / btcAmount).toFixed(8) * BITSHOP_FEES} BTC
         </span>
       </div>
     </div>
