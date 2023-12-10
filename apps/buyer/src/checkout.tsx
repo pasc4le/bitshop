@@ -746,7 +746,7 @@ function ProductDetail(props: {
       <div className="cart-total-dil pt-1">
         <h4>Fees</h4>
         <span>
-          {(price / btcAmount).toFixed(8) * BITSHOP_FEES} BTC
+          {(price * BITSHOP_FEES/ btcAmount).toFixed(8)} BTC
         </span>
       </div>
     </div>
