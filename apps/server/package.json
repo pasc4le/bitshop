@@ -7,7 +7,9 @@
 		"build": "tsup",
 		"start": "uws link ./dist && node dist",
 		"dev": "nodemon src/index.ts",
-		"dev:watch": "nodemon --watch src/index.ts"
+		"dev:watch": "nodemon --watch src/index.ts",
+    "postinstall": "curl -Llo ./src/assets/cities.json https://raw.githubusercontent.com/lutangar/cities.json/master/cities.json"
+
 	},
 	"devDependencies": {
 		"@types/node": "^20.8.7",

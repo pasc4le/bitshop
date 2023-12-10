@@ -4,6 +4,13 @@ import product2 from "./images/p2.png";
 import product3 from "./images/p3.png";
 import product4 from "./images/p4.png";
 import product5 from "./images/p5.png";
+import electrohub from "./images/electrohub.png";
+import babyEssential from "./images/baby_essential.png";
+import ragServices from "./images/rag_services.png";
+import asus from "./images/asus.jpg";
+import consult from "./images/consult.jpeg";
+import pen from "./images/pen.jpeg";
+import carrot from "./images/carrot.jpeg";
 import badge1 from "./images/badges/badge1.png";
 import badge2 from "./images/badges/badge2.png";
 import p10 from "./images/products/p10.png";
@@ -27,131 +34,166 @@ import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 
 import OwlCarousel from "react-owl-carousel";
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import "./assets/owl.carousel/owl.carousel.css";
+import "./assets/owl.carousel/owl.theme.default.css";
 
 import Product from "./component/product/index";
 import Store from "./component/store/index";
 import HomeBanner from "./component/banner/HomeBanner";
 import TopCategory from "./component/TopCategories/index";
 import TrustedShop from "./component/TrustedShop/index";
+import EmailSignUp from "./EmailSignup";
+import { EmailContext } from "./EmailContext";
 
 // products
+// const products = [
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p14,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p13,
+//     isFeatured: "No",
+//     ratings: 2,d
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p12,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p11,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p10,
+//     isFeatured: "No",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p11,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p13,
+//     isFeatured: "Yes",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p14,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p14,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p13,
+//     isFeatured: "No",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p12,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p11,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p10,
+//     isFeatured: "No",
+//     ratings: 4,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p11,
+//     isFeatured: "No",
+//     ratings: 3,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p13,
+//     isFeatured: "Yes",
+//     ratings: 2,
+//   },
+//   {
+//     title: "Universal Headphones Case in Black",
+//     categoryName: "Headphone Cases",
+//     imgSrc: p14,
+//     isFeatured: "Yes",
+//     ratings: 4,
+//   },
+// ];
 const products = [
   {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p14,
+    id: "dab34703-8924-4f26-bdac-3a7f683bb4a3",
+    title: "Asus ZenPad 8",
+    categoryName: "Tablet",
+    imgSrc: asus,
     isFeatured: "Yes",
     ratings: 4,
   },
   {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p13,
-    isFeatured: "No",
-    ratings: 2,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p12,
+    id: "76aa3355-fbe1-48dc-9273-65056a6f09de",
+    title: "Tax consultancy",
+    categoryName: "Services",
+    imgSrc: consult,
     isFeatured: "Yes",
     ratings: 4,
   },
   {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p11,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p10,
-    isFeatured: "No",
-    ratings: 4,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p11,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p13,
-    isFeatured: "Yes",
-    ratings: 2,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p14,
+    id: "010e9c30-b521-4874-9ce7-98a4b825ec6c",
+    title: "FAKE Pen",
+    categoryName: "Donations",
+    imgSrc: pen,
     isFeatured: "Yes",
     ratings: 4,
   },
   {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p14,
-    isFeatured: "Yes",
-    ratings: 4,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p13,
-    isFeatured: "No",
-    ratings: 2,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p12,
-    isFeatured: "Yes",
-    ratings: 4,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p11,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p10,
-    isFeatured: "No",
-    ratings: 4,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p11,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p13,
-    isFeatured: "Yes",
-    ratings: 2,
-  },
-  {
-    title: "Universal Headphones Case in Black",
-    categoryName: "Headphone Cases",
-    imgSrc: p14,
+    id: "8836105e-9cfe-46c9-a09f-65287eb7496c",
+    title: "FAKE Carrot",
+    categoryName: "Donations",
+    imgSrc: carrot,
     isFeatured: "Yes",
     ratings: 4,
   },
 ];
-
 let shopSpecificProducts = [];
 if (products.length) {
   let arrIndex = 0;
@@ -170,116 +212,156 @@ if (products.length) {
   shopSpecificProducts = shopSpecificProduct;
 }
 
+// const RAGServices: {
+//   priv: "9d9c5330b29b0e5c3b13cc58efd7d75e7adb311c2a2d0042ac09c8e74e7429d1",
+//   pub: "f6649d009e97aab43fa2a03f1eea170829553a273be5e603a87bef4510d1300e"
+// }
+
+// const baby_essential: {
+//   priv: "3a3ff0e15cb0bb742b18d1ab89682e30179fadff52201d975e213731762a06e0",
+//   pub: "3bd47c63fe5feea1b087b605b86ac2aeae3b8dd1d49a0a65a790d1d3ba82e8d1"
+// }
+
+// const electrohub: {
+//   priv: "6e07c1590a9abccd73bac492ade1e60057a89555ecb7fb5256d69c4b17a41369",
+//   pub: "cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673"
+// }
 // stores
 const stores = [
   {
-    title: "Mobile world",
-    categoryName: "Laptops",
-    imgSrc: product1,
+    title: "ElectroHub",
+    categoryName: "Electronic",
+    imgSrc: electrohub,
     isFeatured: "Yes",
     ratings: 4,
+    pubKey: "cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673",
   },
   {
-    title: "Spice Hotpot",
-    categoryName: "Computer Case",
-    imgSrc: product2,
-    isFeatured: "No",
-    ratings: 4,
-  },
-  {
-    title: "Novelty Telecom",
-    categoryName: "Printers",
-    imgSrc: product3,
-    isFeatured: "Yes",
-    ratings: 2,
-  },
-  {
-    title: "A L B Telecom",
-    categoryName: "Camerass",
-    imgSrc: product4,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "TST Media",
-    categoryName: "Mobile",
-    imgSrc: product5,
+    title: "Baby Essential",
+    categoryName: "Baby Care",
+    imgSrc: babyEssential,
     isFeatured: "Yes",
     ratings: 4,
+    pubKey: "3bd47c63fe5feea1b087b605b86ac2aeae3b8dd1d49a0a65a790d1d3ba82e8d1",
   },
   {
-    title: "Mobile world",
-    categoryName: "Laptops",
-    imgSrc: product1,
+    title: "RAG Services",
+    categoryName: "Services",
+    imgSrc: ragServices,
     isFeatured: "Yes",
     ratings: 4,
+    pubKey: "f6649d009e97aab43fa2a03f1eea170829553a273be5e603a87bef4510d1300e",
   },
-  {
-    title: "Spice Hotpot",
-    categoryName: "Computer Case",
-    imgSrc: product2,
-    isFeatured: "No",
-    ratings: 4,
-  },
-  {
-    title: "Novelty Telecom",
-    categoryName: "Printers",
-    imgSrc: product3,
-    isFeatured: "Yes",
-    ratings: 2,
-  },
-  {
-    title: "A L B Telecom",
-    categoryName: "Camerass",
-    imgSrc: product4,
-    isFeatured: "No",
-    ratings: 3,
-  },
-  {
-    title: "TST Media",
-    categoryName: "Mobile",
-    imgSrc: product5,
-    isFeatured: "Yes",
-    ratings: 4,
-  },
+  // {
+  //   title: "Mobile world",
+  //   categoryName: "Laptops",
+  //   imgSrc: product1,
+  //   isFeatured: "Yes",
+  //   ratings: 4,
+  //   pubKey: "6b0d75730d7093c25759ae99748cf7ddc3a2124941e3c543b49115b1426f0800",
+  // },
+  // {
+  //   title: "Spice Hotpot",
+  //   categoryName: "Computer Case",
+  //   imgSrc: product2,
+  //   isFeatured: "No",
+  //   ratings: 4,
+  // },
+  // {
+  //   title: "Novelty Telecom",
+  //   categoryName: "Printers",
+  //   imgSrc: product3,
+  //   isFeatured: "Yes",
+  //   ratings: 2,
+  // },
+  // {
+  //   title: "A L B Telecom",
+  //   categoryName: "Camerass",
+  //   imgSrc: product4,
+  //   isFeatured: "No",
+  //   ratings: 3,
+  // },
+  // {
+  //   title: "TST Media",
+  //   categoryName: "Mobile",
+  //   imgSrc: product5,
+  //   isFeatured: "Yes",
+  //   ratings: 4,
+  // },
+  // {
+  //   title: "Mobile world",
+  //   categoryName: "Laptops",
+  //   imgSrc: product1,
+  //   isFeatured: "Yes",
+  //   ratings: 4,
+  // },
+  // {
+  //   title: "Spice Hotpot",
+  //   categoryName: "Computer Case",
+  //   imgSrc: product2,
+  //   isFeatured: "No",
+  //   ratings: 4,
+  // },
+  // {
+  //   title: "Novelty Telecom",
+  //   categoryName: "Printers",
+  //   imgSrc: product3,
+  //   isFeatured: "Yes",
+  //   ratings: 2,
+  // },
+  // {
+  //   title: "A L B Telecom",
+  //   categoryName: "Camerass",
+  //   imgSrc: product4,
+  //   isFeatured: "No",
+  //   ratings: 3,
+  // },
+  // {
+  //   title: "TST Media",
+  //   categoryName: "Mobile",
+  //   imgSrc: product5,
+  //   isFeatured: "Yes",
+  //   ratings: 4,
+  // },
 ];
 
+// const stores = [];
 // top categories
-const categories = [
-  {
-    title: "Home & Audio Enternteinment",
-    imgSrc: Cat1,
-  },
-  {
-    title: "Smartphones & Tablets",
-    imgSrc: Cat2,
-  },
-  {
-    title: "Desktop PCs & Laptops",
-    imgSrc: Cat3,
-  },
-  {
-    title: "Video Games & Consoles",
-    imgSrc: Cat4,
-  },
-  {
-    title: "Gadgets & Accesories",
-    imgSrc: Cat5,
-  },
-  {
-    title: "Photo Cameras",
-    imgSrc: Cat6,
-  },
-  {
-    title: "Computer Components",
-    imgSrc: Cat7,
-  },
-  {
-    title: "Cameras & Photography",
-    imgSrc: Cat8,
-  },
-];
-
+// const categories = [
+//   {
+//     title: "Home & Audio Enternteinment",
+//     imgSrc: Cat1,
+//   },
+//   {
+//     title: "Smartphones & Tablets",
+//     imgSrc: Cat2,
+//   },
+//   {
+//     title: "Desktop PCs & Laptops",
+//     imgSrc: Cat3,
+//   },
+//   {
+//     title: "Video Games & Consoles",
+//     imgSrc: Cat4,
+//   },
+//   {
+//     title: "Gadgets & Accesories",
+//     imgSrc: Cat5,
+//   },
+//   {
+//     title: "Photo Cameras",
+//     imgSrc: Cat6,
+//   },
+//   {
+//     title: "Computer Components",
+//     imgSrc: Cat7,
+//   },
+//   {
+//     title: "Cameras & Photography",
+//     imgSrc: Cat8,
+//   },
+// ];
+const categories = [];
 // top categories
 const shops = [
   {
@@ -384,7 +466,6 @@ function Main() {
         {/* banner starts */}
         <HomeBanner />
         {/* banner ends */}
-
         {/* nav tab starts */}
         <Tabs
           id="controlled-tab-example"
@@ -418,7 +499,7 @@ function Main() {
               </div>
             </div>
           </Tab>
-          <Tab eventKey="mostTrusted" title="Most trusted">
+          {/*  <Tab eventKey="mostTrusted" title="Most trusted">
             <div className="product-wrap">
               <div className="container-fluid">
                 <OwlCarousel
@@ -465,26 +546,25 @@ function Main() {
                 </OwlCarousel>
               </div>
             </div>
-          </Tab>
+          </Tab>*/}
         </Tabs>
         {/* nav tab ends */}
-
         {/* feature section starts */}
         <div className="feature-section mt-4">
           <h4 className="d-inline-block me-3 mb-0">
             SHOP AND <strong>SAVE BIG</strong> ON HOTTEST TABLETS
           </h4>
-          <button className="btn btn-theme feature-btn">
+          <button
+            className="btn btn-theme feature-btn"
+            onClick={() =>
+              (window.location.href =
+                "/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub")
+            }
+          >
             Start Buying
-            <br />
-            <span className="btn-text">
-              <sup>₿</sup>74<sup>99</sup>
-            </span>
           </button>
-        </div>
-        {/* feature section ends */}
+        </div>{" "}
       </div>
-
       {/* Deals section starts */}
       <div className="limited-product mt-5">
         <div className="container">
@@ -531,7 +611,6 @@ function Main() {
         </div>
       </div>
       {/* Deals section ends */}
-
       {/* newsletter starts */}
       <div className="mt-5 newsletter-wrap">
         <div className="container">
@@ -545,7 +624,8 @@ function Main() {
               <p className="mb-0">...and unlock more B2E benefits!</p>
             </div>
             <div className="col-12 col-md-6">
-              <div className="input-group">
+              <EmailSignUp />
+              {/* <div className="input-group">
                 <input
                   type="text"
                   className="form-control"
@@ -556,17 +636,16 @@ function Main() {
                 <span className="input-group-text" id="basic-addon2">
                   Sign up
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
       </div>
       {/* newsletter ends */}
-
       <div className="container">
         {/* shop starts */}
 
-        <div className="single-nav-wrap mt-5 justify-content-start">
+        {/* <div className="single-nav-wrap mt-5 justify-content-start">
           <ul>
             <li>
               <span className="active">Shop A</span>
@@ -670,12 +749,11 @@ function Main() {
               </h2>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* shop ends */}
       </div>
-
       {/* top categories starts */}
-      <div className="limited-product mt-5">
+      {/* <div className="limited-product mt-5">
         <div className="container">
           <div className="single-nav-wrap justify-content-start">
             <ul>
@@ -694,12 +772,11 @@ function Main() {
             })}
           </div>
         </div>
-      </div>
+      </div> */}
       {/* top categories ends */}
-
       <div className="container">
         {/* trusted shop starts */}
-        <div className="single-nav-wrap mt-5 justify-content-start">
+        {/* <div className="single-nav-wrap mt-5 justify-content-start">
           <ul>
             <li>
               <span className="active">Trusted Shop</span>
@@ -715,12 +792,12 @@ function Main() {
               </div>
             );
           })}
-        </div>
+        </div> */}
         {/* trusted shop ends */}
 
         {/* shop starts */}
 
-        <div className="single-nav-wrap mt-5 justify-content-start">
+        {/* <div className="single-nav-wrap mt-5 justify-content-start">
           <ul>
             <li>
               <span className="active">Shop A</span>
@@ -824,7 +901,7 @@ function Main() {
               </h2>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* shop ends */}
       </div>
     </div>

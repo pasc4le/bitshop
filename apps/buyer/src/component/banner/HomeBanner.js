@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import slide1 from "../../images/slide1.png";
 import p from "../../images/details/p.png";
 import b1 from "../../images/b1.png";
@@ -6,8 +7,8 @@ import b2 from "../../images/b2.png";
 import b3 from "../../images/b3.png";
 
 // import OwlCarousel from 'react-owl-carousel';
-import "owl.carousel/dist/assets/owl.carousel.css";
-import "owl.carousel/dist/assets/owl.theme.default.css";
+import "../../assets/owl.carousel/owl.carousel.css";
+import "../../assets/owl.carousel/owl.theme.default.css";
 
 import {
   Carousel,
@@ -62,7 +63,7 @@ function HomeBanner(args) {
       >
         <div className="row justify-content-center align-items-center">
           <div className="col-12 col-md-6">
-            <h1>Bitshop. The Marketplace for All</h1>
+            <h1>Bitshop. The Independent Marketplace for All</h1>
             <p>
               <strong>Sell, Build, Earn</strong>
             </p>
@@ -72,7 +73,15 @@ function HomeBanner(args) {
             <h5>
               <strong>0.00173724 BTC</strong>
             </h5>
-            <button className="btn btn-theme mt-3 mb-4">Start Building</button>
+            <button
+              className="btn btn-theme mt-3 mb-4"
+              onClick={() =>
+                (window.location.href =
+                  "/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub")
+              }
+            >
+              Start Shopping
+            </button>
           </div>
           <div className="col-12 col-md-6 slider-image">
             <img src={item.src} alt={item.altText} />
@@ -126,7 +135,7 @@ function HomeBanner(args) {
             <p className="mb-0">
               CATCH BIG <strong>DEALS</strong> ON THE CAMERAS
             </p>
-            <a href="#">
+            <a href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub">
               <strong>
                 Shop now{" "}
                 <span className="bg-round bg-theme ms-2">
@@ -145,7 +154,7 @@ function HomeBanner(args) {
             <p className="mb-0">
               SHOP THE <strong>HOTTEST</strong> PRODUCTS
             </p>
-            <a href="#">
+            <a href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub">
               <strong>
                 Shop now{" "}
                 <span className="bg-round bg-theme ms-2">
@@ -164,7 +173,10 @@ function HomeBanner(args) {
             <p className="mb-0">
               TABLETS, SMARTPHONES <strong>AND MORE</strong>
             </p>
-            <a href="#" className="mt-1 d-flex align-items-center">
+            <a
+              href="/store?id=cc48ea4b7d16495cc47782dc369cb12a093ce3b152e7cfc8aa4cf63e2ecde673&img=/static/media/electrohub.0714ac986d439bca0cfb.png&title=ElectroHub"
+              className="mt-1 d-flex align-items-center"
+            >
               UP
               <br />
               TO<h6 className="d-inline-block ms-2">70% </h6>{" "}

@@ -1,7 +1,8 @@
 import React from "react";
 
 function Store(props) {
-  const { title, categoryName, isFeatured, imgSrc, ratings } = props.store;
+  const { title, categoryName, isFeatured, imgSrc, ratings, pubKey } =
+    props.store;
   let ratingArr = [];
 
   if (ratings > 0) {
@@ -15,7 +16,7 @@ function Store(props) {
   }
   return (
     <a
-      href="/store?id=c6dc098f6c5159efbff9de794cf590a1c063ea8cd199268e3c424bde96f16de6"
+      href={"/store?id=" + pubKey + "&img=" + imgSrc + "&title=" + title}
       className="p-box"
     >
       <span className="p-cat mb-0 d-block">{categoryName}</span>
