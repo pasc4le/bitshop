@@ -19,6 +19,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@bitshop/eslint-config": "workspace:*",
+    "@bitshop/typescript-config": "workspace:*",
     "autoprefixer": "^10.0.1",
     "daisyui": "^4.4.19",
     "eslint": "^8",
