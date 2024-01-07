@@ -1,4 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {}
+const withNextIntl = require("next-intl/plugin")("./src/lib/intl.ts");
 
-module.exports = nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  transpilePackages: ["@bitshop/ui"],
+};
+
+module.exports = withNextIntl(nextConfig);

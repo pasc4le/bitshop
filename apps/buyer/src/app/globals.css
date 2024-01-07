@@ -14,3 +14,7 @@ body {
   padding: 0;
   height: 100%; /* For mobile viewports. */
 }
+
+body {
+  font-family: theme(fontFamily.body);
+}
