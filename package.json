@@ -10,6 +10,8 @@
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
+    "@bitshop/eslint-config": "workspace:*",
+    "prettier": "^3.1.0",
     "turbo": "latest"
   },
 	"workspaces": [
@@ -18,4 +20,5 @@
 	],
   "packageManager": "pnpm@8.6.10",
   "name": "bitshop"
+    "node": ">=18"
 }
