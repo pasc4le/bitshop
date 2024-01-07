@@ -2,10 +2,7 @@
   "extends": "@bitshop/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist"
-    "paths": {
-      "@bitshop/ui/*": "./src/*"
-    }
   },
-  "include": ["src"],
+  "include": ["src", "turbo"],
   "exclude": ["node_modules", "dist"]
 }

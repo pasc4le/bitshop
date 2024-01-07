@@ -1,0 +1,34 @@
+.wrapper {
+  padding: 10px 27px;
+  border-radius: 1px 1px 5px 5px;
+  font-family: theme(fontFamily.buttons);
+  letter-spacing: -6%;
+  font-weight: theme(fontWeight.medium);
+  @apply transition-transform;
+  border: 0.5px solid theme(colors.neutral-300);
+
+  &:focus-visible {
+    outline: solid 2px theme(colors.accent);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.primary {
+  background: theme(colors.primary);
+  color: theme(colors.primary-content);
+}
+
+.secondary {
+  background: theme(colors.secondary);
+  color: theme(colors.secondary-content);
+  border-color: theme(colors.secondary);
+}
+
+.accent {
+  background: theme(colors.accent);
+  color: theme(colors.accent-content);
+  border-color: theme(colors.accent);
+}
